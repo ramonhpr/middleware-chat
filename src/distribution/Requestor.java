@@ -6,6 +6,8 @@
 package distribution;
 
 import infrastructure.ClientRequestHandler;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  *
@@ -16,10 +18,10 @@ public class Requestor {
     	ClientRequestHandler crh = new ClientRequestHandler(
     			inv.getClientProxy().getHost(), 
     			inv.getClientProxy().getPort());
-    	Marschaller marschaller = new Marschaller();
+    	Marshaller marshaller = new Marshaller();
     	Termination termination = new Termination();
-    	byte [] msgMarschalled;
-    	byte [] msgToBeUnmarshalled;
+    	byte[] msgMarshalled = null;
+    	byte[] msgToBeUnmarshalled = null;
     	Message msgUnmarshalled = new Message();
     	
     	RequestHeader requestHeader = new RequestHeader("",0,true,0,inv.getMethodName());
@@ -28,6 +30,16 @@ public class Requestor {
     	MessageBody messageBody = new MessageBody(requestHeader,requestBody,null,null);
     	Message msgToBeMarshalled = new Message(messageHeader,messageBody);
     	
-    	
+    	msgMarshalled = marshaller.marshall(msgToBeMarshalled);
+        
+        crh.send(msgMarshalled);
+        
+        msgToBeUnmarshalled = crh.receive();
+        
+        msgUnmarshalled = marshaller.unmarshall(msgToBeUnmarshalled);
+        
+        termination.setResult(msgUnmarshalled.getBody().getReplyBody().getOperationResult());
+        
+        return termination;
     }
 }

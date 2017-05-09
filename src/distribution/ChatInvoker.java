@@ -14,6 +14,16 @@ public class ChatInvoker {
 		Termination ter = new Termination();
 		
 		while (true) {
+                    msgToBeUnmarshalled = srh.receive();
+                    
+                    msgUnmarshalled = mrsh.unmarshall(msgToBeUnmarshalled);
+                    
+                    // switch com operações possiveis do chat
+                    
+                    switch (msgUnmarshalled.getBody().getRequestHeader().getOperation())
+                    {
+                        
+                    }
 			
 		}
 	}
