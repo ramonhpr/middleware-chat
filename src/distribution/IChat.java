@@ -1,5 +1,5 @@
 package distribution;
 
 public interface IChat {
-	public void send(String msg) throws Throwable;
+	public void append(String msg) throws Throwable;
 }
