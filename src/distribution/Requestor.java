@@ -13,7 +13,8 @@ import java.net.UnknownHostException;
  *
  * @author risa
  */
-public class Requestor {    
+public class Requestor {  
+	/*
     public Termination invoke(Invocation inv) throws UnknownHostException, IOException, Throwable {
     	ClientRequestHandler crh = new ClientRequestHandler(
     			inv.getClientProxy().getHost(), 
@@ -42,4 +43,5 @@ public class Requestor {
         
         return termination;
     }
+    */
 }

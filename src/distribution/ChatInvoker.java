@@ -11,9 +11,9 @@ public class ChatInvoker {
 		byte[] msgToBeUnmarshalled = null;
 		byte[] msgMarshalled = null;
 		Message msgUnmarshalled = new Message();
-		ChatImpl rObj = new ChatImpl();
+		//ChatImpl rObj = new ChatImpl();
 		Marshaller mrsh = new Marshaller();
-		Termination ter = new Termination();
+		//Termination ter = new Termination();
 		
 		while (true) {
             msgToBeUnmarshalled = srh.receive();

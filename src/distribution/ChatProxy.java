@@ -18,10 +18,10 @@ public class ChatProxy extends ClientProxy implements IChat {
     	
     }
     
-	@Override
+	//@Override
 	public void send(String msg) throws Throwable {
-		Invocation inv = new Invocation();
-		Termination ter = new Termination();
+		//Invocation inv = new Invocation();
+		//Termination ter = new Termination();
 		ArrayList<Object> parameters = new ArrayList<Object>();
 		class Local {};
 		String methodName = null;
@@ -29,13 +29,19 @@ public class ChatProxy extends ClientProxy implements IChat {
 		
 		methodName = Local.class.getEnclosingMethod().getName();
 		parameters.add(msg);
-		
+		/*
 		inv.setObjectId(this.getObjectId());
 		inv.setIpAddress(this.getHost());
 		inv.setPortNumber(this.getPort());
 		inv.setOperationName(methodName);
 		inv.setParameters(parameters);
+		*/
+		//ter = requestor.invoke(inv);
+	}
+
+	@Override
+	public void append(String msg) throws Throwable {
+		// TODO Auto-generated method stub
 		
-		ter = requestor.invoke(inv);
 	}
 }
