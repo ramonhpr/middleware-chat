@@ -1,3 +1,4 @@
 bin/application/*.class
 bin/distribution/*.class
 bin/infrastructure/*.class
+*.class
