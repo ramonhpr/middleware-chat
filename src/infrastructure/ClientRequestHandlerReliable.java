@@ -87,9 +87,11 @@ public class ClientRequestHandlerReliable {
 					clientSocket.close();
 	                outToServer.close();
 	                inFromServer.close();
-	            } catch (ClassNotFoundException | IOException e1) {
+	            } catch (IOException e1) {
 	                return;
-	            }
+	            } catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
             }
         }
     }
