@@ -13,5 +13,5 @@ import java.util.ArrayList;
  * @author rhpr
  */
 public class RequestBody implements Serializable {
-		private ArrayList<Object> parameters = new ArrayList<Object>();		
+//		private ArrayList<Object> parameters = new ArrayList<Object>();		
 }

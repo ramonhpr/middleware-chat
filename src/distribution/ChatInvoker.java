@@ -22,10 +22,10 @@ public class ChatInvoker {
             
             // switch com operações possiveis do chat
             
-            switch (msgUnmarshalled.getBody().getRequestHeader().getOperation())
-            {
-                
-            }
+//            switch (msgUnmarshalled.getBody().getRequestHeader().getOperation())
+//            {
+//                
+//            }
 		}
 	}
 }

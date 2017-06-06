@@ -15,7 +15,7 @@ import java.net.Socket;
  *
  * @author risa
  */
-public class ServerRequestHandler {
+public class ServerRequestHandlerReliable {
     private int portNumber;
     private ServerSocket welcomeSocket = null;
     private Socket connectionSocket = null;
@@ -25,7 +25,7 @@ public class ServerRequestHandler {
     private DataOutputStream outToClient = null;
     private DataInputStream inFromClient = null;
     
-    public ServerRequestHandler(int port) {
+    public ServerRequestHandlerReliable(int port) {
         this.portNumber = port;
     }
     

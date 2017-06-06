@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
  */
 public class ChatClient {
     public static void main(String[] args) throws UnknownHostException{
-	System.out.println("ChatClient inicializado");
+    	System.out.println("ChatClient inicializado");
+    	
     }
 }
