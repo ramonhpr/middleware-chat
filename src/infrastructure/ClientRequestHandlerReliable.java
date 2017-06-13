@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -35,8 +36,8 @@ public class ClientRequestHandlerReliable {
 	public ClientRequestHandlerReliable(String host, int port) {
         this.host = host;
         this.port = port;
-        this.queueIN = new ArrayDeque<String>();
-        this.queueOUT = new ArrayDeque<String>();
+        this.queueIN = new ArrayDeque<byte[]>();
+        this.queueOUT = new ArrayDeque<byte[]>();
         
         boolean receiving = true;
         
@@ -50,9 +51,9 @@ public class ClientRequestHandlerReliable {
         }
     }
     
-	public void send() {
+	private void send() {
 		while (!queueOUT.isEmpty()) {
-			String message = queueOUT.remove();
+			byte[] message = queueOUT.remove();
 			
 	        try {
 				clientSocket = new Socket(host, port);
@@ -67,7 +68,7 @@ public class ClientRequestHandlerReliable {
     	        inFromServer.close();
 			} catch (IOException e1) {
 //				return;
-				addQueueOUT(message);
+				pushOut(message);
 			}  	
 		}
 	}
@@ -80,7 +81,7 @@ public class ClientRequestHandlerReliable {
 		        	outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
 		        	inFromServer = new ObjectInputStream(clientSocket.getInputStream());
 		        	
-                	String message = (String) inFromServer.readObject();
+                	byte[] message = (byte[]) inFromServer.readObject();
                 	queueIN.add(message);
 
 					clientSocket.close();
