@@ -8,12 +8,24 @@ public class Invoker {
 	private Marshaller marshaller;
 	private ServerRequestHandlerReliable srhr;
 	private Callback serverListener;
+	private QueueManager queueManager;
 
-	public Invoker(Callback listener) {
+	public Invoker() {
 		try {
 			srhr = new ServerRequestHandlerReliable();
 			marshaller = new Marshaller();
-			serverListener = listener;
+			serverListener = new Callback(){
+				@Override
+				public void onReceive(Message msg) {
+					// TODO Auto-generated method stub
+					String channel = msg.getHeader().getChannel();
+					String host = msg.getHeader().getIp();
+					int port = msg.getHeader().getPort();
+					String message = msg.getBody().getMessage();
+					queueManager.subscribeOnChannel(channel, host, port);
+					queueManager.publishOnChannel(channel, message);
+				}
+			};
 			System.out.println("inicia o invoker");
 			new Thread(new ReceiveMsgListener()).start();
 		} catch (IOException e) {
@@ -36,18 +48,17 @@ public class Invoker {
 	}
 
 	class ReceiveMsgListener implements Runnable {
-		private boolean run = true;
-		
 		@Override
 		public void run() {
-			while (run) {
+			while (true) {
 				byte[] receivedMsg = srhr.receive();
 				if (receivedMsg != null) {
-					run = false;
 					try {
 						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-						serverListener.onReceive(rcvdMsg);
+//						serverListener.onReceive(rcvdMsg);
 						System.out.println("Inoker recebeu: "+rcvdMsg.getBody().getMessage());
+						
+						
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();

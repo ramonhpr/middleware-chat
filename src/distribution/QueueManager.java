@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QueueManager {
-	private Map<String,ArrayList<InetSocketAddress>> map;
+	private static Map<String,ArrayList<InetSocketAddress>> map;
 	private ArrayList<String> listMsg;
-	private Map<String,ArrayList<String>> mapMsg;
+	private static Map<String,ArrayList<String>> mapMsg;
 	
 	public QueueManager()
 	{
@@ -19,8 +19,9 @@ public class QueueManager {
 	}
 	
 	
-	public void subscribeOnChannel(String channel, String host, int port)
+	public static void subscribeOnChannel(String channel, String host, int port)
 	{
+		//implementar method para verificar se o client está em uma única list
 		ArrayList<InetSocketAddress> l = null;
 		if(map.get(channel) == null)
 		{
@@ -33,8 +34,9 @@ public class QueueManager {
 		l.add(i);
 	}
 	
-	public void publishOnChannel(String channel, String message)
+	public static void publishOnChannel(String channel, String message)
 	{
+		//seria melhor lista de Message, pois temos que ter o nome do usuario que digitou a msg
 		ArrayList<String> l = null;
 		if(mapMsg.get(channel) == null)
 		{

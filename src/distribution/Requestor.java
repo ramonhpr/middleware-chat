@@ -50,7 +50,7 @@ public class Requestor {
 					try {
 						System.out.println("cliente recebeu msg");
 						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-						clientListener.onReceive(rcvdMsg.getBody().getMessage());
+						clientListener.onReceive(rcvdMsg);
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();

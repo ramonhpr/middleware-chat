@@ -21,16 +21,10 @@ public class ChatClient {
     public static void main(String[] args) throws UnknownHostException{
     	System.out.println("ChatClient inicializado");
     	Callback callback = new Callback() {
-			
-			@Override
-			public void onReceive(String msg) {
-				// TODO Auto-generated method stub
-				System.out.println("Client recebeu: "+msg);
-			}
-
 			@Override
 			public void onReceive(Message msg) {
 				// TODO Auto-generated method stub
+				System.out.println("Client recebeu: "+msg.getBody().getMessage());
 				
 			}
 		};
