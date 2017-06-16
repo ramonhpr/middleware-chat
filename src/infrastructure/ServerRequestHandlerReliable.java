@@ -24,7 +24,7 @@ import distribution.Message;
  * @author risa
  */
 public class ServerRequestHandlerReliable {
-	private int portNumber;
+	private int port;
 	private ServerSocket welcomeSocket = null;
 	private Socket connectionSocket = null;
 
@@ -39,45 +39,14 @@ public class ServerRequestHandlerReliable {
 	public ServerRequestHandlerReliable() throws IOException {
 		queueIN = new ArrayDeque<byte[]>();
 		queueOUT = new ArrayDeque<byte[]>();
-		portNumber = 1313;
-		welcomeSocket = new ServerSocket(portNumber);
-//		while (true) {
+		port = 1313;
+		welcomeSocket = new ServerSocket(port);
 //			/*FIXME: remove this loop on constructor
 //			 * Make a thread just to accept connection and a array of 
 //			 * socket/thread to handle them */
-//            connectionSocket = welcomeSocket.accept();
-//            System.out.println("Accept connection");
-//    		(new Thread(new ThreadProcessServer(connectionSocket))).start();
-//    		System.out.println("Send to port 4000");
-//			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-//    		try {
-//    			ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-//    			objectStream.writeObject("Hello");
-//    		} catch (IOException e) {
-//    			// TODO Auto-generated catch block
-//    			e.printStackTrace();
-//    		}
-//    		System.out.println("Queue out");
-//    		pushOut(byteStream.toByteArray(), "localhost", 4000);
-//        }
-		(new Thread(new ThreadAcceptServer())).start();
+		(new Thread(new ThreadProcessServer())).start();
 	}
 	
-	class ThreadAcceptServer implements Runnable {
-		public void run() {
-			while(true) {
-	            try {
-					connectionSocket = welcomeSocket.accept();
-		            System.out.println("Accept connection");
-		    		(new Thread(new ThreadProcessServer(connectionSocket))).start();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 	public void pushOut(byte[] msg, String host, int port) {
 		// FIXME: Associar IP e Porta na mensagem numa mesma classe	
 		queueOUT.add(msg);
@@ -94,11 +63,10 @@ public class ServerRequestHandlerReliable {
 			System.out.println("Socket created");
 			System.out.println("Message size="+sentMessageSize);
 			outToClient.writeInt(sentMessageSize);
-			outToClient.write(msg);
+			outToClient.write(msg,0,sentMessageSize);
 			outToClient.flush();
 			System.out.println("Message sent!");
 			s.close();
-			outToClient.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			pushOut(msg, host, port);
@@ -110,32 +78,23 @@ public class ServerRequestHandlerReliable {
 	}
 
 	class ThreadProcessServer implements Runnable {
-		private Socket connectionSocket = null;
-
-		public ThreadProcessServer(Socket connectionSocket) {
-			this.connectionSocket = connectionSocket;
-		}
-
 		public void run() {
-//			ObjectInputStream inFromClient = null;
 			byte[] request = null;
-
 			try {
-				inFromClient = new DataInputStream(this.connectionSocket.getInputStream());
-				while (true) {
-					System.out.println("Read object from port "+ this.connectionSocket.getPort());
+				connectionSocket = welcomeSocket.accept();
+	            System.out.println("Accept connection");
+				inFromClient = new DataInputStream(connectionSocket.getInputStream());
+//				while (true) {
+//					System.out.println("Read object from port "+ connectionSocket.getPort());
 					receivedMessageSize = inFromClient.readInt();
 					System.out.println("size: "+receivedMessageSize);
 		        	request = new byte[receivedMessageSize];
                 	inFromClient.read(request, 0, receivedMessageSize);
-//	                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
-//	            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
-//	            		String s = (String) objectStream.readObject();
-//						System.out.println("Message recive " + s.toString());
 					queueIN.add(request);
 					System.out.println("queueIn is empty:" + queueIN.isEmpty());
 					inFromClient.close();
-				}
+					System.out.println("size of queueIn is: "+queueIN.size());
+//				}
 			} catch (IOException e1) {
 				return;
 			}

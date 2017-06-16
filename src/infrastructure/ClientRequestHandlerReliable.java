@@ -18,50 +18,51 @@ import java.util.Queue;
  * @author risa
  */
 public class ClientRequestHandlerReliable {
-    private String host;
-    private int port;
+    private String host, serverHost;
+    private int port, serverPort;
     
     private Socket clientSocket = null;
+    private Socket serverSocket = null;
+	private ServerSocket welcomeSocket = null;
     private DataOutputStream outToServer = null;
     private DataInputStream inFromServer = null;
     
     private Queue<byte[]> queueIN;
     private Queue<byte[]> queueOUT;
-    
-    public void pushOut(byte[] message) {
-		queueOUT.add(message);
-		send();
-	}
 
 	public ClientRequestHandlerReliable(String host, int port) {
         this.host = host;
         this.port = port;
+        this.serverHost = "localhost";
+        this.serverPort = 1313;
         this.queueIN = new ArrayDeque<byte[]>();
         this.queueOUT = new ArrayDeque<byte[]>();
         
         try {
-			clientSocket = new Socket("localhost", 1313);
-			(new Thread(new ThreadReceive(new ServerSocket(port)))).start();
+			clientSocket = new Socket(serverHost, serverPort);
+			welcomeSocket = new ServerSocket(port);
+			(new Thread(new ThreadReceive())).start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
     
+    public void pushOut(byte[] message) {
+		queueOUT.add(message);
+		send();
+	}
+    
 	private void send() {
 		while (!queueOUT.isEmpty()) {
 			byte[] message = queueOUT.remove();
-			
 	        try {
-//				clientSocket = new Socket(host, port);
 		        outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		        System.out.println("size of message: " + message.length);
 		        outToServer.writeInt(message.length);
 				outToServer.write(message,0,message.length);
     	        outToServer.flush();
-
     	        outToServer.close();
 			} catch (IOException e1) {
-//				return;
 				pushOut(message);
 			}  	
 		}
@@ -72,28 +73,21 @@ public class ClientRequestHandlerReliable {
 	}
     
     class ThreadReceive implements Runnable {
-    	private ServerSocket clientSocket = null;
-
-		public ThreadReceive(ServerSocket connectionSocket) {
-			this.clientSocket = connectionSocket;
-		}
         public void run() {
+        	byte[] message = null;
             while (true) {
 	            try {
-	            	Socket rcvServer = clientSocket.accept();
-            		inFromServer = new DataInputStream(rcvServer.getInputStream());
+	            	serverSocket = welcomeSocket.accept();
+            		inFromServer = new DataInputStream(serverSocket.getInputStream());
 		        	int size = inFromServer.readInt();
-		        	byte[] message = new byte[size];
-                	inFromServer.read(message);
+		        	System.out.println("client msg size is:"+size);
+		        	message = new byte[size];
+                	inFromServer.read(message, 0, size);
                 	queueIN.add(message);
-//                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
-//            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
-//            		String s = (String) objectStream.readObject();
-
-					rcvServer.close();
+                	System.out.println("client recebeu msg");
 	                inFromServer.close();
 	            } catch (Exception e1) {
-
+	            	return;
 	            }
             }
         }

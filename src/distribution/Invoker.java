@@ -14,10 +14,12 @@ public class Invoker {
 			srhr = new ServerRequestHandlerReliable();
 			marshaller = new Marshaller();
 			serverListener = listener;
+			System.out.println("inicia o invoker");
 			new Thread(new ReceiveMsgListener()).start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("nao criou o invoker");
 		}
 	}
 
@@ -33,28 +35,33 @@ public class Invoker {
 		}
 	}
 
-	private class ReceiveMsgListener implements Runnable {
+	class ReceiveMsgListener implements Runnable {
+		private boolean run = true;
+		
 		@Override
 		public void run() {
-			while (true) {
-				receive();
-			}
-		}
-		
-		private void receive(){
-			byte[] receivedMsg = srhr.receive();
-			if (receivedMsg != null) {
-				returnMessage(receivedMsg);
-			}
-		}
-		
-		private void returnMessage(byte[] receivedMsg){
-			try {
-				Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-				serverListener.onReceive(rcvdMsg);
-			} catch (ClassNotFoundException | IOException
-					| InterruptedException e) {
-				e.printStackTrace();
+			while (run) {
+				byte[] receivedMsg = srhr.receive();
+				if (receivedMsg != null) {
+					run = false;
+					try {
+						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+						serverListener.onReceive(rcvdMsg);
+						System.out.println("Inoker recebeu: "+rcvdMsg.getBody().getMessage());
+					} catch (ClassNotFoundException | IOException
+							| InterruptedException e) {
+						e.printStackTrace();
+						System.out.println("nao retornou a msg");
+					}
+				}
+				else {
+					try {
+						Thread.sleep(0);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

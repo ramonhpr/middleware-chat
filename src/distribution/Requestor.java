@@ -45,24 +45,25 @@ public class Requestor {
 		@Override
 		public void run() {
 			while (true) {
-				receive();
-			}
-		}
-		
-		private void receive(){
-			byte[] receivedMsg = crhr.receive();
-			if (receivedMsg != null) {
-				returnMessage(receivedMsg);
-			}
-		}
-		
-		private void returnMessage(byte[] receivedMsg){
-			try {
-				Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-				clientListener.onReceive(rcvdMsg.getBody().getMessage());
-			} catch (ClassNotFoundException | IOException
-					| InterruptedException e) {
-				e.printStackTrace();
+				byte[] receivedMsg = crhr.receive();
+				if (receivedMsg != null) {
+					try {
+						System.out.println("cliente recebeu msg");
+						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+						clientListener.onReceive(rcvdMsg.getBody().getMessage());
+					} catch (ClassNotFoundException | IOException
+							| InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				else {
+					try {
+						Thread.sleep(0);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}
