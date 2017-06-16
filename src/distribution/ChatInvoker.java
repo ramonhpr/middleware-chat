@@ -1,12 +1,10 @@
 package distribution;
 
-import java.io.IOException;
-
-import infrastructure.ServerRequestHandler;
 
 public class ChatInvoker {
-	public void invoke(ClientProxy clientProxy) throws IOException, Throwable {
-		ServerRequestHandler srh = new ServerRequestHandler(
+	/*public void invoke(ClientProxy clientProxy) throws IOException, Throwable {
+	
+		ServerRequestHandlerReliable srh = new ServerRequestHandlerReliable(
 			clientProxy.getPort());
 		byte[] msgToBeUnmarshalled = null;
 		byte[] msgMarshalled = null;
@@ -28,4 +26,5 @@ public class ChatInvoker {
 //            }
 		}
 	}
+	*/
 }

@@ -11,12 +11,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayDeque;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import distribution.Message;
@@ -41,23 +38,43 @@ public class ServerRequestHandlerReliable {
 	public ServerRequestHandlerReliable() throws IOException {
 		queueIN = new ArrayDeque<byte[]>();
 		queueOUT = new ArrayDeque<byte[]>();
-		welcomeSocket = new ServerSocket(1313);
-		while (true) {
-            connectionSocket = welcomeSocket.accept();
-            System.out.println("Accept connection");
-    		(new Thread(new ThreadProcessServer(connectionSocket))).start();
-    		System.out.println("Send to port 4000");
-			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-    		try {
-    			ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-    			objectStream.writeObject("Hello");
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    		System.out.println("Queue out");
-    		pushOut(byteStream.toByteArray(), "localhost", 4000);
-        }
+		portNumber = 1313;
+		welcomeSocket = new ServerSocket(portNumber);
+//		while (true) {
+//			/*FIXME: remove this loop on constructor
+//			 * Make a thread just to accept connection and a array of 
+//			 * socket/thread to handle them */
+//            connectionSocket = welcomeSocket.accept();
+//            System.out.println("Accept connection");
+//    		(new Thread(new ThreadProcessServer(connectionSocket))).start();
+//    		System.out.println("Send to port 4000");
+//			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+//    		try {
+//    			ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
+//    			objectStream.writeObject("Hello");
+//    		} catch (IOException e) {
+//    			// TODO Auto-generated catch block
+//    			e.printStackTrace();
+//    		}
+//    		System.out.println("Queue out");
+//    		pushOut(byteStream.toByteArray(), "localhost", 4000);
+//        }
+		(new Thread(new ThreadAcceptServer())).start();
+	}
+	
+	class ThreadAcceptServer implements Runnable {
+		public void run() {
+			while(true) {
+	            try {
+					connectionSocket = welcomeSocket.accept();
+		            System.out.println("Accept connection");
+		    		(new Thread(new ThreadProcessServer(connectionSocket))).start();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void pushOut(byte[] msg, String host, int port) {
@@ -95,11 +112,11 @@ public class ServerRequestHandlerReliable {
 		}
 
 		public void run() {
-			ObjectInputStream inFromClient = null;
+//			ObjectInputStream inFromClient = null;
 			byte[] request = null;
 
 			try {
-				inFromClient = new ObjectInputStream(connectionSocket.getInputStream());
+				inFromClient = new DataInputStream(connectionSocket.getInputStream());
 			} catch (IOException e1) {
 				return;
 			}
@@ -107,13 +124,13 @@ public class ServerRequestHandlerReliable {
 			while (true) {
 				try {
 					System.out.println("Read object from port "+ connectionSocket.getPort());
-					int size = inFromClient.readInt();
-		        	byte[] message = new byte[size];
-                	inFromClient.read(message, 0, size);
-                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
-            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
-            		String s = (String) objectStream.readObject();
-					System.out.println("Message recive " + s.toString());
+					receivedMessageSize = inFromClient.readInt();
+		        	request = new byte[receivedMessageSize];
+                	inFromClient.read(request, 0, receivedMessageSize);
+//                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
+//            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+//            		String s = (String) objectStream.readObject();
+//					System.out.println("Message recive " + s.toString());
 					queueIN.add(request);
 					inFromClient.close();
 				} catch (Exception e1) {

@@ -1,23 +1,33 @@
 package distribution;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Message implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private MessageHeader header;
 	private MessageBody body;
 
-    Message(MessageHeader messageHeader, MessageBody messageBody) {
+    public Message(MessageHeader messageHeader, MessageBody messageBody) {
         header = messageHeader;
         body = messageBody;
     }
 
-    Message() {
-        header = null;
-        body = null;
+    public Message() {
     }
 
-    MessageBody getBody() {
+    public MessageBody getBody() {
         return body;
     }
+
+	public MessageHeader getHeader() {
+		return header;
+	}
+
+	public void setHeader(MessageHeader header) {
+		this.header = header;
+	}
+
+	public void setBody(MessageBody body) {
+		this.body = body;
+	}
 }

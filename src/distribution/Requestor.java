@@ -5,9 +5,6 @@
  */
 package distribution;
 
-import infrastructure.ClientRequestHandler;
-import java.io.IOException;
-import java.net.UnknownHostException;
 
 /**
  *

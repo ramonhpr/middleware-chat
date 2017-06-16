@@ -12,23 +12,24 @@ import java.io.Serializable;
  * @author rhpr
  */
 public class MessageBody implements Serializable {
-    private RequestHeader requestHeader;
-    private RequestBody requestBody;
-    private ReplyHeader replyHeader;
-    private ReplyBody replyBody;
 
-    MessageBody(RequestHeader requestHeader, RequestBody requestBody, Object object, Object object0) {
-        this.replyBody = replyBody;
-        this.replyHeader = replyHeader;
-        this.requestBody = requestBody;
-        this.requestHeader = this.requestHeader;
-    }
+	private static final long serialVersionUID = 1L;
+	private String message;
 
-    ReplyBody getReplyBody() {
-        return replyBody;
-    }
+	public MessageBody(){
+		
+	}
+	
+	public MessageBody(String message){
+		this.message = message;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
 
-    RequestHeader getRequestHeader() {
-        return requestHeader;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
 }
