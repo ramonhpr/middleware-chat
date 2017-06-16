@@ -16,14 +16,6 @@ import distribution.ChatInvoker;
 public class ChatServer {
 	public static void main(String[] args) throws IOException, Throwable {
 		System.out.println("ChatServer inicializado");
-		ServerRequestHandlerReliable srh = new ServerRequestHandlerReliable(3000);
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		try {
-			ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-			objectStream.writeObject("Hello");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ServerRequestHandlerReliable srh = new ServerRequestHandlerReliable();
 	}
 }

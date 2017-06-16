@@ -6,6 +6,7 @@
 package infrastructure;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -25,7 +26,7 @@ public class ClientRequestHandlerReliable {
     
     private Socket clientSocket = null;
     private ObjectOutputStream outToServer = null;
-    private ObjectInputStream inFromServer = null;
+    private DataInputStream inFromServer = null;
     
     private Queue<byte[]> queueIN;
     private Queue<byte[]> queueOUT;
@@ -44,7 +45,7 @@ public class ClientRequestHandlerReliable {
         
         try {
 			clientSocket = new Socket("localhost", 1313);
-			(new Thread(new ThreadReceive(new ServerSocket(port).accept()))).start();
+			(new Thread(new ThreadReceive(new ServerSocket(port)))).start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -73,32 +74,34 @@ public class ClientRequestHandlerReliable {
 	}
     
     class ThreadReceive implements Runnable {
-    	private Socket clientSocket = null;
+    	private ServerSocket clientSocket = null;
 
-		public ThreadReceive(Socket connectionSocket) {
+		public ThreadReceive(ServerSocket connectionSocket) {
 			this.clientSocket = connectionSocket;
 		}
         public void run() {
             while (true) {
             	System.out.println("Running thread!");
 	            try {
+	            	Socket rcvServer = clientSocket.accept();
 	            	System.out.println("Create input stream port ");
-            		inFromServer = new ObjectInputStream((clientSocket).getInputStream());
+            		inFromServer = new DataInputStream(rcvServer.getInputStream());
             		System.out.println("Read object from port ");
 		        	int size = inFromServer.readInt();
-		        	byte[] message =new byte[size];
-                	inFromServer.read(message, 0, size);
+		        	System.out.println("tamanho="+size);
+		        	byte[] message = new byte[size];
+                	inFromServer.read(message);
                 	queueIN.add(message);
                 	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
             		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
             		String s = (String) objectStream.readObject();
                 	System.out.println("Message recive " + s.toString());
 
-					clientSocket.close();
+					rcvServer.close();
 	                inFromServer.close();
 	            } catch (Exception e1) {
 	            	e1.printStackTrace();
-	                return;
+	            	return;
 	            }
             }
         }
