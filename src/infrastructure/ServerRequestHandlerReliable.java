@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+import distribution.Marshaller;
 import distribution.Message;
 
 /**
@@ -103,6 +104,10 @@ public class ServerRequestHandlerReliable {
 			pushOut(msg, host, port);
 		}
 	}
+	
+	public byte[] receive(){
+		return queueIN.poll();
+	}
 
 	class ThreadProcessServer implements Runnable {
 		private Socket connectionSocket = null;
@@ -135,9 +140,5 @@ public class ServerRequestHandlerReliable {
 				return;
 			}
 		}
-	}
-
-	public Queue<byte[]> getQueueIN() {
-		return queueIN;
 	}
 }

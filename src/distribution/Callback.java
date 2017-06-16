@@ -9,4 +9,5 @@ package distribution;
  */
 public interface Callback {
 	void onReceive(String msg);
+	void onReceive(Message msg);
 }
