@@ -5,6 +5,8 @@
  */
 package infrastructure;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,6 +15,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.Queue;
+
+import distribution.Message;
 
 /**
  * 
@@ -31,11 +35,14 @@ public class ServerRequestHandlerReliable {
 	private Queue<byte[]> queueIN;
 	private Queue<byte[]> queueOUT;
 
-	public ServerRequestHandlerReliable(int port) throws IOException {
-		this.portNumber = port;
+	public ServerRequestHandlerReliable() throws IOException {
 		queueIN = new ArrayDeque<byte[]>();
+		queueOUT = new ArrayDeque<byte[]>();
 		welcomeSocket = new ServerSocket(1313);
 		while (true) {
+			/*FIXME: remove this loop on constructor
+			 * Make a thread just to accept connection and a array of 
+			 * socket/thread to handle them */
             connectionSocket = welcomeSocket.accept();
     		(new Thread(new ThreadProcessServer(connectionSocket))).start();
         }
@@ -51,15 +58,19 @@ public class ServerRequestHandlerReliable {
 		byte[] msg = queueOUT.remove();
 		sentMessageSize = msg.length;
 		try {
-			outToClient = new DataOutputStream(new Socket(host, port).getOutputStream());
+			System.out.println("Create socket on port "+port);
+			Socket s = new Socket(host, port);
+			outToClient = new DataOutputStream(s.getOutputStream());
+			System.out.println("Socket created");
+			System.out.println("Message size="+sentMessageSize);
 			outToClient.writeInt(sentMessageSize);
 			outToClient.write(msg);
 			outToClient.flush();
-
-			connectionSocket.close();
-			welcomeSocket.close();
+			System.out.println("Message sent!");
+			s.close();
 			outToClient.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 			pushOut(msg, host, port);
 		}
 	}
@@ -83,11 +94,20 @@ public class ServerRequestHandlerReliable {
 
 			while (true) {
 				try {
-					request = (byte[]) inFromClient.readObject();
+					System.out.println("Read object from port "+ connectionSocket.getPort());
+					int size = inFromClient.readInt();
+		        	byte[] message = new byte[size];
+                	inFromClient.read(message, 0, size);
+                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
+            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+            		String s = (String) objectStream.readObject();
+					System.out.println("Message recive " + s.toString());
 					queueIN.add(request);
+					inFromClient.close();
 				} catch (Exception e1) {
 					return;
 				}
+				
 			}
 		}
 	}

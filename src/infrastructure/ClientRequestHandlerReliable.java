@@ -5,9 +5,12 @@
  */
 package infrastructure;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayDeque;
@@ -23,12 +26,12 @@ public class ClientRequestHandlerReliable {
     
     private Socket clientSocket = null;
     private ObjectOutputStream outToServer = null;
-    private ObjectInputStream inFromServer = null;
+    private DataInputStream inFromServer = null;
     
-    private Queue<String> queueIN;
-    private Queue<String> queueOUT;
+    private Queue<byte[]> queueIN;
+    private Queue<byte[]> queueOUT;
     
-    public void addQueueOUT(String message) {
+    public void pushOut(byte[] message) {
 		queueOUT.add(message);
 		send();
 	}
@@ -39,16 +42,12 @@ public class ClientRequestHandlerReliable {
         this.queueIN = new ArrayDeque<byte[]>();
         this.queueOUT = new ArrayDeque<byte[]>();
         
-        boolean receiving = true;
-        
-        while (receiving) {
-			try {
-				clientSocket = new Socket("localhost", 1313);
-	            (new Thread(new ThreadReceive())).start();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        }
+        try {
+			clientSocket = new Socket("localhost", 1313);
+			(new Thread(new ThreadReceive(new ServerSocket(port)))).start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}   
     }
     
 	private void send() {
@@ -58,14 +57,11 @@ public class ClientRequestHandlerReliable {
 	        try {
 				clientSocket = new Socket(host, port);
 		        outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-		        inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-		        
-				outToServer.writeObject(message);
+		        outToServer.writeInt(message.length);
+				outToServer.write(message,0,message.length);
     	        outToServer.flush();
 
-    			clientSocket.close();
     	        outToServer.close();
-    	        inFromServer.close();
 			} catch (IOException e1) {
 //				return;
 				pushOut(message);
@@ -74,24 +70,29 @@ public class ClientRequestHandlerReliable {
 	}
     
     class ThreadReceive implements Runnable {
+    	private ServerSocket clientSocket = null;
+
+		public ThreadReceive(ServerSocket connectionSocket) {
+			this.clientSocket = connectionSocket;
+		}
         public void run() {
             while (true) {
 	            try {
-					clientSocket = new Socket(host, port);
-		        	outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-		        	inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-		        	
-                	byte[] message = (byte[]) inFromServer.readObject();
+	            	Socket rcvServer = clientSocket.accept();
+            		inFromServer = new DataInputStream(rcvServer.getInputStream());
+		        	int size = inFromServer.readInt();
+		        	byte[] message = new byte[size];
+                	inFromServer.read(message);
                 	queueIN.add(message);
+                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
+            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+            		String s = (String) objectStream.readObject();
 
-					clientSocket.close();
-	                outToServer.close();
+					rcvServer.close();
 	                inFromServer.close();
-	            } catch (IOException e1) {
-	                return;
-	            } catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
+	            } catch (Exception e1) {
+
+	            }
             }
         }
     }
