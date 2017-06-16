@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import distribution.Message;
-
 /**
  * 
  * @author risa
@@ -38,8 +36,7 @@ public class ServerRequestHandlerReliable {
 	private Queue<byte[]> queueIN;
 	private Queue<byte[]> queueOUT;
 
-	public ServerRequestHandlerReliable(int port) throws IOException {
-		this.portNumber = port;
+	public ServerRequestHandlerReliable() throws IOException {
 		queueIN = new ArrayDeque<byte[]>();
 		queueOUT = new ArrayDeque<byte[]>();
 		welcomeSocket = new ServerSocket(1313);
@@ -72,13 +69,15 @@ public class ServerRequestHandlerReliable {
 		sentMessageSize = msg.length;
 		try {
 			System.out.println("Create socket on port "+port);
-			outToClient = new DataOutputStream(new Socket(host, port).getOutputStream());
+			Socket s = new Socket(host, port);
+			outToClient = new DataOutputStream(s.getOutputStream());
 			System.out.println("Socket created");
+			System.out.println("Message size="+sentMessageSize);
 			outToClient.writeInt(sentMessageSize);
 			outToClient.write(msg);
 			outToClient.flush();
 			System.out.println("Message sent!");
-
+			s.close();
 			outToClient.close();
 		} catch (IOException e) {
 			e.printStackTrace();

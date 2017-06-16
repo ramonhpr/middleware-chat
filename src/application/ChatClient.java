@@ -23,22 +23,12 @@ public class ChatClient {
     	ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		try {
 			ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-			objectStream.writeObject("oi");
+			objectStream.writeObject("ola");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	crh.pushOut(byteStream.toByteArray());
-//    	ByteArrayOutputStream byteStream2 = new ByteArrayOutputStream();
-//    	ClientRequestHandlerReliable crh2 = new ClientRequestHandlerReliable("localhost", 4000);
-//		try {
-//			ObjectOutputStream objectStream = new ObjectOutputStream(byteStream2);
-//			objectStream.writeObject("Oi");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    	crh2.pushOut(byteStream2.toByteArray());
     	
     }
 }
