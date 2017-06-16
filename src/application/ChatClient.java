@@ -43,8 +43,24 @@ public class ChatClient {
     	
     	try {
 			byte[] byteArray = marshaller.marshall(message);
+			System.out.println("envia message:" + message.toString());
 			crh.pushOut(byteArray);
 		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+		while(crh.getQueueIN().isEmpty()) {
+			System.out.println("loop c");
+		}
+		
+		System.out.println("saiu do loop is empty, significa recebeu uma message");
+		byte[] received = crh.getQueueIN().remove();
+    	
+    	try {
+			Message receivedMessage = marshaller.unmarshall(received);
+	    	System.out.println("recebeu:" + receivedMessage.toString());
+		} catch (ClassNotFoundException | IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -116,28 +116,28 @@ public class ServerRequestHandlerReliable {
 			byte[] request = null;
 
 			try {
-				inFromClient = new DataInputStream(connectionSocket.getInputStream());
+				inFromClient = new DataInputStream(this.connectionSocket.getInputStream());
+				while (true) {
+					System.out.println("Read object from port "+ this.connectionSocket.getPort());
+					receivedMessageSize = inFromClient.readInt();
+					System.out.println("size: "+receivedMessageSize);
+		        	request = new byte[receivedMessageSize];
+                	inFromClient.read(request, 0, receivedMessageSize);
+//	                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
+//	            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+//	            		String s = (String) objectStream.readObject();
+//						System.out.println("Message recive " + s.toString());
+					queueIN.add(request);
+					System.out.println("queueIn is empty:" + queueIN.isEmpty());
+					inFromClient.close();
+				}
 			} catch (IOException e1) {
 				return;
 			}
-
-			while (true) {
-				try {
-					System.out.println("Read object from port "+ connectionSocket.getPort());
-					receivedMessageSize = inFromClient.readInt();
-		        	request = new byte[receivedMessageSize];
-                	inFromClient.read(request, 0, receivedMessageSize);
-//                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
-//            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
-//            		String s = (String) objectStream.readObject();
-//					System.out.println("Message recive " + s.toString());
-					queueIN.add(request);
-					inFromClient.close();
-				} catch (Exception e1) {
-					return;
-				}
-				
-			}
 		}
+	}
+
+	public Queue<byte[]> getQueueIN() {
+		return queueIN;
 	}
 }

@@ -6,6 +6,7 @@
 package infrastructure;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -22,7 +23,7 @@ public class ClientRequestHandlerReliable {
     private int port;
     
     private Socket clientSocket = null;
-    private ObjectOutputStream outToServer = null;
+    private DataOutputStream outToServer = null;
     private DataInputStream inFromServer = null;
     
     private Queue<byte[]> queueIN;
@@ -52,8 +53,9 @@ public class ClientRequestHandlerReliable {
 			byte[] message = queueOUT.remove();
 			
 	        try {
-				clientSocket = new Socket(host, port);
-		        outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+//				clientSocket = new Socket(host, port);
+		        outToServer = new DataOutputStream(clientSocket.getOutputStream());
+		        System.out.println("size of message: " + message.length);
 		        outToServer.writeInt(message.length);
 				outToServer.write(message,0,message.length);
     	        outToServer.flush();
@@ -97,4 +99,8 @@ public class ClientRequestHandlerReliable {
             }
         }
     }
+
+	public Queue<byte[]> getQueueIN() {
+		return queueIN;
+	}
 }

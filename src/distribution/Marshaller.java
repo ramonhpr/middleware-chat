@@ -20,6 +20,8 @@ public class Marshaller {
 	}
 	
 	public Message unmarshall(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException {
+		ArrayUtils.reverse(msgToBeUnmarshalled);
+		
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(msgToBeUnmarshalled);
 		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
 		
