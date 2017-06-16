@@ -12,17 +12,38 @@ import java.io.Serializable;
  * @author rhpr
  */
 public class MessageHeader implements Serializable {
-    private String magic;
-    private int version;
-    private boolean byteOrder;
-    private int messageType;
-    private long messageSize;
 
-    MessageHeader(String miop, int i, boolean b, int i0, int i1) {
-        this.magic = miop;
-        version = i;
-        byteOrder = b;
-        messageType = i0;
-        messageSize = i1;
-    }
+	private static final long serialVersionUID = 1L;
+	
+	private String ip;
+	private int port;
+	private String channel;
+	
+	public MessageHeader() {
+	}
+	
+	public MessageHeader(String ip, int port, String channel) {
+		this.ip = ip;
+		this.port = port;
+		this.channel = channel;
+	}
+	
+	public String getIp() {
+		return ip;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+	public int getPort() {
+		return port;
+	}
+	public void setPort(int port) {
+		this.port = port;
+	}
+	public String getChannel() {
+		return channel;
+	}
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
 }
