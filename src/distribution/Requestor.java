@@ -5,40 +5,65 @@
  */
 package distribution;
 
+import infrastructure.ClientRequestHandlerReliable;
+
+import java.io.IOException;
 
 /**
  *
  * @author risa
  */
-public class Requestor {  
-	/*
-    public Termination invoke(Invocation inv) throws UnknownHostException, IOException, Throwable {
-    	ClientRequestHandler crh = new ClientRequestHandler(
-    			inv.getClientProxy().getHost(), 
-    			inv.getClientProxy().getPort());
-    	Marshaller marshaller = new Marshaller();
-    	Termination termination = new Termination();
-    	byte[] msgMarshalled = null;
-    	byte[] msgToBeUnmarshalled = null;
-    	Message msgUnmarshalled = new Message();
-    	
-    	RequestHeader requestHeader = new RequestHeader("",0,true,0,inv.getMethodName());
-    	RequestBody requestBody = new RequestBody(inv.getParameters());
-    	MessageHeader messageHeader = new MessageHeader("MIOP",0,false,0,0);
-    	MessageBody messageBody = new MessageBody(requestHeader,requestBody,null,null);
-    	Message msgToBeMarshalled = new Message(messageHeader,messageBody);
-    	
-    	msgMarshalled = marshaller.marshall(msgToBeMarshalled);
-        
-        crh.send(msgMarshalled);
-        
-        msgToBeUnmarshalled = crh.receive();
-        
-        msgUnmarshalled = marshaller.unmarshall(msgToBeUnmarshalled);
-        
-        termination.setResult(msgUnmarshalled.getBody().getReplyBody().getOperationResult());
-        
-        return termination;
-    }
-    */
+public class Requestor {
+	private int port;
+	private String ip;
+	private Marshaller marshaller;
+	private ClientRequestHandlerReliable crhr;
+	private Callback clientListener;
+
+	public Requestor(int port, String ip, Callback listener) {
+		this.port = port;
+		this.ip = ip;
+		marshaller = new Marshaller();
+		crhr = new ClientRequestHandlerReliable(ip, port);
+		clientListener = listener;
+		new Thread(new ReceiveMsgListener()).start();
+	}
+
+	public void publishMessage(String msg, String channel) {
+		MessageBody body = new MessageBody(msg);
+		MessageHeader header = new MessageHeader(ip, port, channel);
+		Message message = new Message(header, body);
+
+		try {
+			crhr.pushOut(marshaller.marshall(message));
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private class ReceiveMsgListener implements Runnable {
+		@Override
+		public void run() {
+			while (true) {
+				receive();
+			}
+		}
+		
+		private void receive(){
+			byte[] receivedMsg = crhr.receive();
+			if (receivedMsg != null) {
+				returnMessage(receivedMsg);
+			}
+		}
+		
+		private void returnMessage(byte[] receivedMsg){
+			try {
+				Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+				clientListener.onReceive(rcvdMsg.getBody().getMessage());
+			} catch (ClassNotFoundException | IOException
+					| InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

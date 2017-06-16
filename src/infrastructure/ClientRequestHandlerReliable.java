@@ -68,6 +68,10 @@ public class ClientRequestHandlerReliable {
 			}  	
 		}
 	}
+	
+	public byte[] receive(){
+		return queueIN.poll();
+	}
     
     class ThreadReceive implements Runnable {
     	private ServerSocket clientSocket = null;
