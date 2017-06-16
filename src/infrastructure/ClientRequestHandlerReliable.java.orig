@@ -5,6 +5,13 @@
  */
 package infrastructure;
 
+<<<<<<< HEAD
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+=======
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -13,6 +20,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+>>>>>>> 3cbe80db07a26a925af048c27409194ead1734f3
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -32,10 +40,6 @@ public class ClientRequestHandlerReliable {
     private Queue<byte[]> queueOUT;
     
     public void pushOut(byte[] message) {
-<<<<<<< HEAD
-    	System.out.println("Send "+ message.toString());
-=======
->>>>>>> a1cbf21bb33dadc9b367fb7c8225b68ea8143014
 		queueOUT.add(message);
 		send();
 	}
@@ -51,13 +55,7 @@ public class ClientRequestHandlerReliable {
 			(new Thread(new ThreadReceive(new ServerSocket(port)))).start();
 		} catch (IOException e) {
 			e.printStackTrace();
-<<<<<<< HEAD
-		}
-        
-        
-=======
 		}   
->>>>>>> a1cbf21bb33dadc9b367fb7c8225b68ea8143014
     }
     
 	private void send() {
@@ -65,18 +63,10 @@ public class ClientRequestHandlerReliable {
 			byte[] message = queueOUT.remove();
 			
 	        try {
-<<<<<<< HEAD
-		        outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-		        System.out.println("Write message on socket " + clientSocket.getLocalPort());
-		        outToServer.writeInt(message.length);
-				outToServer.write(message,0,message.length);
-				System.out.println("Sucessfully send");
-=======
 				clientSocket = new Socket(host, port);
 		        outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
 		        outToServer.writeInt(message.length);
 				outToServer.write(message,0,message.length);
->>>>>>> a1cbf21bb33dadc9b367fb7c8225b68ea8143014
     	        outToServer.flush();
 
     	        outToServer.close();
@@ -86,6 +76,13 @@ public class ClientRequestHandlerReliable {
 			}  	
 		}
 	}
+<<<<<<< HEAD
+=======
+	
+	public byte[] receive(){
+		return queueIN.poll();
+	}
+>>>>>>> 3cbe80db07a26a925af048c27409194ead1734f3
     
     class ThreadReceive implements Runnable {
     	private ServerSocket clientSocket = null;
@@ -95,41 +92,27 @@ public class ClientRequestHandlerReliable {
 		}
         public void run() {
             while (true) {
-<<<<<<< HEAD
-            	System.out.println("Running thread!");
-	            try {
-	            	Socket rcvServer = clientSocket.accept();
-	            	System.out.println("Create input stream port ");
-            		inFromServer = new DataInputStream(rcvServer.getInputStream());
-            		System.out.println("Read object from port ");
-		        	int size = inFromServer.readInt();
-		        	System.out.println("tamanho="+size);
-=======
 	            try {
 	            	Socket rcvServer = clientSocket.accept();
             		inFromServer = new DataInputStream(rcvServer.getInputStream());
 		        	int size = inFromServer.readInt();
->>>>>>> a1cbf21bb33dadc9b367fb7c8225b68ea8143014
 		        	byte[] message = new byte[size];
                 	inFromServer.read(message);
                 	queueIN.add(message);
+<<<<<<< HEAD
+//                	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
+//            		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+//            		String s = (String) objectStream.readObject();
+=======
                 	ByteArrayInputStream byteStream = new ByteArrayInputStream(message);
             		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
             		String s = (String) objectStream.readObject();
-<<<<<<< HEAD
-                	System.out.println("Message recive " + s.toString());
-=======
->>>>>>> a1cbf21bb33dadc9b367fb7c8225b68ea8143014
+>>>>>>> 3cbe80db07a26a925af048c27409194ead1734f3
 
 					rcvServer.close();
 	                inFromServer.close();
 	            } catch (Exception e1) {
-<<<<<<< HEAD
-	            	e1.printStackTrace();
-	            	return;
-=======
 
->>>>>>> a1cbf21bb33dadc9b367fb7c8225b68ea8143014
 	            }
             }
         }
