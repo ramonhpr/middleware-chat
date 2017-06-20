@@ -5,7 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.apache.commons.lang3.ArrayUtils;
+import java.util.ArrayList;
+import java.util.List;
+
+import utils.ArrayUtils;
 
 public class Marshaller {
 	public byte [] marshall(Message msgToBeMarshalled) throws IOException, InterruptedException {
@@ -15,6 +18,10 @@ public class Marshaller {
 		
 		byte[] byteArray = byteStream.toByteArray();
 		ArrayUtils.reverse(byteArray);
+		
+		List<Object> lista = new ArrayList<>();
+		
+		
 		
 		return byteArray;
 	}
