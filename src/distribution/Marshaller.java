@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.apache.commons.lang3.ArrayUtils;
+
+import utils.ArrayUtils;
+
 
 public class Marshaller {
 	public byte [] marshall(Message msgToBeMarshalled) throws IOException, InterruptedException {
