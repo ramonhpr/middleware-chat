@@ -13,12 +13,9 @@ public class Invoker {
 		try {
 			srhr = new ServerRequestHandlerReliable();
 			marshaller = new Marshaller();
-			System.out.println("inicia o invoker");
 			new Thread(new ReceiveMsgListener()).start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("nao criou o invoker");
 		}
 	}
 
@@ -42,8 +39,6 @@ public class Invoker {
 				if (receivedMsg != null) {
 					try {
 						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-//						serverListener.onReceive(rcvdMsg);
-						System.out.println("Inoker recebeu: "+rcvdMsg.getBody().getMessage());
 						String host = rcvdMsg.getHeader().getIp();
 						int port = rcvdMsg.getHeader().getPort();
 						String channel = rcvdMsg.getHeader().getChannel();
@@ -52,8 +47,6 @@ public class Invoker {
 						queueManager.publishOnChannel(rcvdMsg);
 						queueManager.printMap();
 						queueManager.printMapMsg();
-						
-						
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();
@@ -64,7 +57,6 @@ public class Invoker {
 					try {
 						Thread.sleep(0);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

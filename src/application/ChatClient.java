@@ -5,7 +5,18 @@
  */
 package application;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
 import java.net.UnknownHostException;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import distribution.Callback;
 import distribution.Message;
@@ -15,10 +26,69 @@ import distribution.Requestor;
  *
  * @author risa
  */
-public class ChatClient {
+public class ChatClient extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static Requestor requestor;
+		
+	public ChatClient() {
+        JTextField hostField = new JTextField(15);
+        JTextField portField = new JTextField(5);
+        
+        JLabel hostLabel = new JLabel("Host: ");
+        hostLabel.setLabelFor(hostField);
+        JLabel portLabel = new JLabel("Port: ");
+        portLabel.setLabelFor(portField); 
+        
+        JPanel textControlsPane = new JPanel();
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+ 
+        textControlsPane.setLayout(gridbag);
+ 
+        JLabel[] labels = {hostLabel, portLabel};
+        JTextField[] textFields = {hostField, portField};
+        
+        GridBagConstraints c1 = new GridBagConstraints();
+        c1.anchor = GridBagConstraints.EAST;        
+        int numLabels = labels.length;
+        
+        for (int i = 0; i < numLabels; i++) {
+            c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+            c.fill = GridBagConstraints.NONE;      //reset to default
+            c.weightx = 0.0;                       //reset to default
+            textControlsPane.add(labels[i], c1);
+ 
+            c.gridwidth = GridBagConstraints.REMAINDER;     //end row
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.weightx = 1.0;
+            textControlsPane.add(textFields[i], c1);
+        }
+ 
+        c.gridwidth = GridBagConstraints.REMAINDER; //last
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        textControlsPane.setBorder(
+                BorderFactory.createCompoundBorder(
+                                BorderFactory.createTitledBorder("Bem-vindo ao Chat!"),
+                                BorderFactory.createEmptyBorder(5,5,5,5)));
+        
+        setLayout(new BorderLayout());
+        add(textControlsPane, BorderLayout.CENTER);
+		
+		//basic configurations
+	    setTitle("New Client");
+	    setResizable(false);
+	    setDefaultCloseOperation(EXIT_ON_CLOSE);
+	    pack();
+	    setLocationRelativeTo(null);
+	    setVisible(true);
+	}
 	
     public static void main(String[] args) throws UnknownHostException{
+    	new ChatClient();
     	System.out.println("ChatClient inicializado");
     	Callback callback = new Callback() {
 			@Override
