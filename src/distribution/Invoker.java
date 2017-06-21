@@ -7,25 +7,12 @@ import infrastructure.ServerRequestHandlerReliable;
 public class Invoker {
 	private Marshaller marshaller;
 	private ServerRequestHandlerReliable srhr;
-	private Callback serverListener;
 	private QueueManager queueManager;
 
 	public Invoker() {
 		try {
 			srhr = new ServerRequestHandlerReliable();
 			marshaller = new Marshaller();
-			serverListener = new Callback(){
-				@Override
-				public void onReceive(Message msg) {
-					// TODO Auto-generated method stub
-					String channel = msg.getHeader().getChannel();
-					String host = msg.getHeader().getIp();
-					int port = msg.getHeader().getPort();
-					String message = msg.getBody().getMessage();
-					queueManager.subscribeOnChannel(channel, host, port);
-					queueManager.publishOnChannel(channel, message);
-				}
-			};
 			System.out.println("inicia o invoker");
 			new Thread(new ReceiveMsgListener()).start();
 		} catch (IOException e) {
@@ -57,6 +44,14 @@ public class Invoker {
 						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
 //						serverListener.onReceive(rcvdMsg);
 						System.out.println("Inoker recebeu: "+rcvdMsg.getBody().getMessage());
+						String host = rcvdMsg.getHeader().getIp();
+						int port = rcvdMsg.getHeader().getPort();
+						String channel = rcvdMsg.getHeader().getChannel();
+						String message = rcvdMsg.getBody().getMessage();
+						queueManager.subscribeOnChannel(channel, host, port);
+						queueManager.publishOnChannel(rcvdMsg);
+						queueManager.printMap();
+						queueManager.printMapMsg();
 						
 						
 					} catch (ClassNotFoundException | IOException

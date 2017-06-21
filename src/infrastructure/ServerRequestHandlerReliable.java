@@ -80,23 +80,27 @@ public class ServerRequestHandlerReliable {
 	class ThreadProcessServer implements Runnable {
 		public void run() {
 			byte[] request = null;
-			try {
-				connectionSocket = welcomeSocket.accept();
-	            System.out.println("Accept connection");
-				inFromClient = new DataInputStream(connectionSocket.getInputStream());
-//				while (true) {
-//					System.out.println("Read object from port "+ connectionSocket.getPort());
-					receivedMessageSize = inFromClient.readInt();
-					System.out.println("size: "+receivedMessageSize);
-		        	request = new byte[receivedMessageSize];
-                	inFromClient.read(request, 0, receivedMessageSize);
-					queueIN.add(request);
-					System.out.println("queueIn is empty:" + queueIN.isEmpty());
-					inFromClient.close();
-					System.out.println("size of queueIn is: "+queueIN.size());
-//				}
-			} catch (IOException e1) {
-				return;
+			while(true) {
+				try {
+					connectionSocket = welcomeSocket.accept();
+		            System.out.println("Accept connection");
+					inFromClient = new DataInputStream(connectionSocket.getInputStream());
+	//				while (true) {
+	//					System.out.println("Read object from port "+ connectionSocket.getPort());
+						receivedMessageSize = inFromClient.readInt();
+						System.out.println("size: "+receivedMessageSize);
+			        	request = new byte[receivedMessageSize];
+	                	inFromClient.read(request, 0, receivedMessageSize);
+						queueIN.add(request);
+						System.out.println("queueIn is empty:" + queueIN.isEmpty());
+						inFromClient.close();
+						System.out.println("size of queueIn is: "+queueIN.size());
+	//				}
+					connectionSocket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					return;
+				}
 			}
 		}
 	}

@@ -39,7 +39,6 @@ public class ClientRequestHandlerReliable {
         this.queueOUT = new ArrayDeque<byte[]>();
         
         try {
-			clientSocket = new Socket(serverHost, serverPort);
 			welcomeSocket = new ServerSocket(port);
 			(new Thread(new ThreadReceive())).start();
 		} catch (IOException e) {
@@ -56,12 +55,14 @@ public class ClientRequestHandlerReliable {
 		while (!queueOUT.isEmpty()) {
 			byte[] message = queueOUT.remove();
 	        try {
+				clientSocket = new Socket(serverHost, serverPort);
 		        outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		        System.out.println("size of message: " + message.length);
 		        outToServer.writeInt(message.length);
 				outToServer.write(message,0,message.length);
     	        outToServer.flush();
     	        outToServer.close();
+    	        clientSocket.close();
 			} catch (IOException e1) {
 				pushOut(message);
 			}  	

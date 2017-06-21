@@ -28,6 +28,12 @@ public class MessageHeader implements Serializable {
 		this.channel = channel;
 	}
 	
+	public MessageHeader(String ip, int port) {
+		this.ip = ip;
+		this.port = port;
+//		this.channel = channel;
+	}
+	
 	public String getIp() {
 		return ip;
 	}

@@ -33,7 +33,11 @@ public class Message implements Serializable {
 
 	@Override
 	public String toString() {
-		return body.getMessage();
+		String string = "ip: "+this.header.getIp()+"\n"
+				+ "port: "+this.header.getPort()+"\n"
+				+ "channel: "+this.header.getChannel()+"\n"
+				+ "message: "+this.body.getMessage();
+		return string;
 	}
 	
 	

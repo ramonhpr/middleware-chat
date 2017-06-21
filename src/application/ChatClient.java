@@ -30,5 +30,27 @@ public class ChatClient {
 		};
     	requestor = new Requestor(4000, "localhost", callback);
     	requestor.publishMessage("Olá!", "Channel 1");
+    	try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	requestor.publishMessage("Olá para o channal 2!", "Channel 2");
+    	try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	Requestor requestor2 = new Requestor(220, "localhost", callback);
+    	requestor2.publishMessage("Olá do outro user!", "Channel 2");
+    	try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	requestor2.publishMessage("como vai aqui é o user 2!", "Channel 1");
     }
 }
