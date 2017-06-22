@@ -1,4 +1,4 @@
-package distribution;
+package utils;
 
 import java.io.Serializable;
 

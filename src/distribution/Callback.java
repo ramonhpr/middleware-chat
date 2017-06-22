@@ -3,6 +3,8 @@
  */
 package distribution;
 
+import utils.Message;
+
 /**
  * @author avss
  *

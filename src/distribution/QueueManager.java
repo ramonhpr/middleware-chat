@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import utils.Message;
+
 public class QueueManager {
 	private static Map<String,ArrayList<InetSocketAddress>> map = new HashMap<>();
 	private static Map<String,ArrayList<Message>> mapMsg = new HashMap<>();

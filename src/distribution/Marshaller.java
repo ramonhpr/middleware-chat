@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-//import utils.ArrayUtils;
+import utils.Cryptographer;
+import utils.Message;
+
 
 
 public class Marshaller {
@@ -16,35 +18,20 @@ public class Marshaller {
 		objectStream.writeObject(msgToBeMarshalled);
 		
 		byte[] byteArray = byteStream.toByteArray();
-		reverse(byteArray);
-//		ArrayUtils.reverse(byteArray);    
+		
+		Cryptographer.codec(byteArray);
+    
 		
 		return byteArray;
 	}
 	
 	public Message unmarshall(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException {
-//		ArrayUtils.reverse(msgToBeUnmarshalled);
-		reverse(msgToBeUnmarshalled);
+
+		Cryptographer.codec(msgToBeUnmarshalled);
 		
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(msgToBeUnmarshalled);
 		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
 		
 		return (Message) objectStream.readObject();
 	}
-
-	public static void reverse(final byte[] array) {
-	      if (array == null) {
-	          return;
-	      }
-	      int i = 0;
-	      int j = array.length - 1;
-	      byte tmp;
-	      while (j > i) {
-	          tmp = array[j];
-	          array[j] = array[i];
-	          array[i] = tmp;
-	          j--;
-	          i++;
-	      }
-	  }
 }

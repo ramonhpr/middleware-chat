@@ -9,11 +9,14 @@ package utils;
  */
 public class Cryptographer {
 	public static void codec(byte[] array){
-		int size = array.length;
-		byte[] yarra = new byte[size];
-		for(int i = 0; i < size; i++){
-			yarra[i] = array[size - i - 1];
-		}
-		array = yarra;
+		if (array == null) {
+	          return;
+	      }
+	      byte yarra;
+	      for (int i = 0,j = array.length - 1 ; j > i; j--, i++) {
+	          yarra = array[j];
+	          array[j] = array[i];
+	          array[i] = yarra;
+	      }
 	}
 }

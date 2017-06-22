@@ -18,8 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import utils.Message;
 import distribution.Callback;
-import distribution.Message;
 import distribution.Requestor;
 
 /**

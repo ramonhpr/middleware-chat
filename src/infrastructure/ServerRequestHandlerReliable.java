@@ -16,8 +16,8 @@ import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+import utils.Message;
 import distribution.Marshaller;
-import distribution.Message;
 
 /**
  * 
