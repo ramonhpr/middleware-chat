@@ -56,14 +56,14 @@ public class ChatClient extends JFrame{
         int numLabels = labels.length;
         
         for (int i = 0; i < numLabels; i++) {
-            c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
-            c.fill = GridBagConstraints.NONE;      //reset to default
-            c.weightx = 0.0;                       //reset to default
+            c1.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+            c1.fill = GridBagConstraints.NONE;      //reset to default
+            c1.weightx = 0.0;                       //reset to default
             textControlsPane.add(labels[i], c1);
  
-            c.gridwidth = GridBagConstraints.REMAINDER;     //end row
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.weightx = 1.0;
+            c1.gridwidth = GridBagConstraints.REMAINDER;     //end row
+            c1.fill = GridBagConstraints.HORIZONTAL;
+            c1.weightx = 1.0;
             textControlsPane.add(textFields[i], c1);
         }
  
