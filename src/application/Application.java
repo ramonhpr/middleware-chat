@@ -85,7 +85,7 @@ public class Application extends JFrame{
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         
         //new subscriber button
-        JButton newClient = new JButton("New Client");
+        JButton newClient = new JButton("New Subscriber");
         
         //create border subscribers
         JPanel borderSubscriber = new JPanel(new BorderLayout());
