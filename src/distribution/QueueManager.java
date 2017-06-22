@@ -10,10 +10,16 @@ import java.util.Map.Entry;
 import utils.Message;
 
 public class QueueManager {
-	private static Map<String,ArrayList<InetSocketAddress>> map = new HashMap<>();
-	private static Map<String,ArrayList<Message>> mapMsg = new HashMap<>();
+	private Map<String,ArrayList<InetSocketAddress>> map;
+	private Map<String,ArrayList<Message>> mapMsg;
 	
-	public static void subscribeOnChannel(String channel, String host, int port)
+	public QueueManager() {
+		// TODO Auto-generated constructor stub
+		map = new HashMap<>();
+		mapMsg = new HashMap<>();
+	}
+	
+	public void subscribeOnChannel(String channel, String host, int port)
 	{
 		ArrayList<InetSocketAddress> l = null;
 		//se nao tiver lista de inscritos, cria
@@ -35,11 +41,11 @@ public class QueueManager {
 		l.add(i);
 	}
 	
-	public static List<InetSocketAddress> getSubscribers(String channel){
+	public List<InetSocketAddress> getSubscribers(String channel){
 		return map.get(channel);
 	}
 	
-	public static void publishOnChannel(Message message)
+	public void publishOnChannel(Message message)
 	{
 		InetSocketAddress i = new InetSocketAddress(message.getHeader().getIp(), message.getHeader().getPort());
 		String channel = null;
@@ -64,7 +70,7 @@ public class QueueManager {
 		}
 	}
 	
-	public static void printMap() {
+	public void printMap() {
 		System.out.println("\nLista de inscritos:");
 		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
 			System.out.println("	channel: "+entry.getKey());
@@ -74,7 +80,7 @@ public class QueueManager {
 		}
 	}
 	
-	public static void printMapMsg() {
+	public void printMapMsg() {
 		System.out.println("\nLista de mensagens:");
 		for (Entry<String, ArrayList<Message>> entry : mapMsg.entrySet()) {
 			System.out.println("	channel: "+entry.getKey());

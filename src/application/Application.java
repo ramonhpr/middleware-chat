@@ -3,6 +3,8 @@ package application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -15,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class Application extends JFrame{
+public class Application extends JFrame implements MouseListener{
 	/**
 	 * 
 	 */
@@ -63,6 +65,7 @@ public class Application extends JFrame{
 
         //new topic button
         JButton newTopic = new JButton("New Topic");
+        newTopic.addMouseListener(this);
         
         //create border channels
         JPanel borderChannel = new JPanel(new BorderLayout());
@@ -86,6 +89,7 @@ public class Application extends JFrame{
         
         //new subscriber button
         JButton newClient = new JButton("New Subscriber");
+        newClient.addMouseListener(this);
         
         //create border subscribers
         JPanel borderSubscriber = new JPanel(new BorderLayout());
@@ -108,6 +112,7 @@ public class Application extends JFrame{
         
 		//send button
         JButton send = new JButton("Send");
+        send.addMouseListener(this);
         
         //create border message
         JPanel borderMessage = new JPanel(new BorderLayout());
@@ -142,5 +147,40 @@ public class Application extends JFrame{
 	
 	public static void main(String[] args) {
 		new Application();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		JButton button = (JButton) e.getSource();
+		switch (button.getText()) {
+		case "New Subscriber":
+			new ChatClient();
+			break;
+		}
 	}
 }

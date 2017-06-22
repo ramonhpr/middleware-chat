@@ -12,12 +12,13 @@ import infrastructure.ServerRequestHandlerReliable;
 public class Invoker {
 	private Marshaller marshaller;
 	private ServerRequestHandlerReliable srhr;
-//	private QueueManager queueManager;
+	private QueueManager queueManager;
 
 	public Invoker() {
 		try {
 			srhr = new ServerRequestHandlerReliable();
 			marshaller = new Marshaller();
+			queueManager = new QueueManager();
 			new Thread(new ReceiveMsgListener()).start();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -41,7 +42,7 @@ public class Invoker {
 	}
 	
 	public void broadcast(String channel, byte[] message){
-		for(InetSocketAddress subscriber : QueueManager.getSubscribers(channel)){
+		for(InetSocketAddress subscriber : queueManager.getSubscribers(channel)){
 			send(message, subscriber);
 		}
 	}
@@ -59,10 +60,10 @@ public class Invoker {
 						int port = rcvdMsg.getHeader().getPort();
 						String channel = rcvdMsg.getHeader().getChannel();
 						String message = rcvdMsg.getBody().getMessage();
-						QueueManager.subscribeOnChannel(channel, host, port);
-						QueueManager.publishOnChannel(rcvdMsg);
-						QueueManager.printMap();
-						QueueManager.printMapMsg();
+						queueManager.subscribeOnChannel(channel, host, port);
+						queueManager.publishOnChannel(rcvdMsg);
+						queueManager.printMap();
+						queueManager.printMapMsg();
 						
 //						Cryptographer.codec(receivedMsg);
 						broadcast(channel, cpyrcvMsg);

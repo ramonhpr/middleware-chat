@@ -98,39 +98,39 @@ public class ChatClient extends JFrame implements MouseListener{
 		//basic configurations
 	    setTitle("New Subscriber");
 	    setResizable(false);
-	    setDefaultCloseOperation(EXIT_ON_CLOSE);
+	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	    pack();
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 	}
 	
     public static void main(String[] args) throws UnknownHostException{
-    	new ChatClient();
-//    	System.out.println("ChatClient inicializado");
-//    	requestor = new Requestor(4000, "localhost");
-//    	requestor.publishMessage("4000: Olá!", "Channel 1");
-//    	try {
-//			Thread.sleep(10000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    	requestor.publishMessage("4000: Olá para o channal 2!", "Channel 2");
-//    	try {
-//			Thread.sleep(10000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    	Requestor requestor2 = new Requestor(220, "localhost");
-//    	requestor2.publishMessage("220: Olá do outro user!", "Channel 2");
-//    	try {
-//			Thread.sleep(10000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    	requestor2.publishMessage("220: como vai aqui é o user 2!", "Channel 1");
+//    	new ChatClient();
+    	System.out.println("ChatClient inicializado");
+    	Requestor requestor = new Requestor(4000, "localhost");
+    	requestor.publishMessage("4000: Olá!", "Channel 1");
+    	try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	requestor.publishMessage("4000: Olá para o channal 2!", "Channel 2");
+    	try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	Requestor requestor2 = new Requestor(220, "localhost");
+    	requestor2.publishMessage("220: Olá do outro user!", "Channel 2");
+    	try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	requestor2.publishMessage("220: como vai aqui é o user 2!", "Channel 1");
     }
 
 	@Override
@@ -144,7 +144,7 @@ public class ChatClient extends JFrame implements MouseListener{
 			int portNumber = 0;
 			
 			//compara com o padrão valido
-			boolean hostValid = host.matches("(\\d{1,3}\\.){3}\\d{1,3}");
+			boolean hostValid = host.matches("(\\d{1,3}\\.){3}\\d{1,3}|localhost");
 			boolean portValid= port.matches("\\d{1,5}");
 			
 			if(!hostValid){
@@ -158,18 +158,21 @@ public class ChatClient extends JFrame implements MouseListener{
 			}
 			else{
 				System.out.println("Port number must be <= 65535");
+				new Warning("Port number must be <= 65535");
 			}
 			
 			if(hostValid && portValid){
 		    	System.out.println("New Subscriber created: "+host+"\\"+String.valueOf(port));
 		    	Requestor requestor = new Requestor(portNumber, host);
 		    	requestors.add(requestor);
+		    	new Warning("New Subscriber created: "+host+"\\"+String.valueOf(port));
+		    	dispose();
 			}
 			
 			break;
 			
 		case "Cancel":
-			System.exit(0);
+			dispose();
 			
 			break;
 		}
@@ -199,7 +202,7 @@ public class ChatClient extends JFrame implements MouseListener{
 		
 	}
 	
-	public class Warning extends JFrame {
+	public class Warning extends JFrame implements MouseListener{
 		public Warning(String message) {
 			JPanel panel = new JPanel();
 			panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -211,38 +214,7 @@ public class ChatClient extends JFrame implements MouseListener{
 	        
 	        JButton ok = new JButton("OK");
 	        ok.setAlignmentX(CENTER_ALIGNMENT);
-	        ok.addMouseListener(new MouseListener() {
-				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					// TODO Auto-generated method stub
-					System.exit(0);
-				}
-			});
+	        ok.addMouseListener(this);
 	        panel.add(ok);
 	        
 			add(panel);
@@ -250,10 +222,45 @@ public class ChatClient extends JFrame implements MouseListener{
 			//basic configurations
 		    setTitle("Warning!");
 		    setResizable(false);
-		    setDefaultCloseOperation(EXIT_ON_CLOSE);
+		    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		    pack();
 		    setLocationRelativeTo(null);
 		    setVisible(true);
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			JButton button = (JButton) e.getSource();
+			switch (button.getText()) {
+			case "OK":
+				dispose();
+				break;
+			}
 		}
 	}
 }
