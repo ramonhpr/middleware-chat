@@ -24,13 +24,30 @@ public class Requestor {
 	private ClientRequestHandlerReliable crhr;
 	private Callback clientListener;
 
-	public Requestor(int port, String ip, Callback listener) {
+	public Requestor(final int port, String ip) {
 		this.port = port;
 		this.ip = ip;
 		marshaller = new Marshaller();
-		crhr = new ClientRequestHandlerReliable(ip, port);
-		clientListener = listener;
-		new Thread(new ReceiveMsgListener()).start();
+		clientListener = new Callback() {
+			
+			@Override
+			public void onReceive() {
+				// TODO Auto-generated method stub
+				byte[] receivedMsg;
+
+				receivedMsg = crhr.receive();
+				if (receivedMsg != null) {
+					try {
+						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+						System.out.println(port+" recebeu msg: "+rcvdMsg.getBody().getMessage());
+					} catch (ClassNotFoundException | IOException
+							| InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		crhr = new ClientRequestHandlerReliable(ip, port, clientListener);
 	}
 
 	public void publishMessage(String msg, String channel) {
@@ -42,33 +59,6 @@ public class Requestor {
 			crhr.pushOut(marshaller.marshall(message));
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
-		}
-	}
-
-	private class ReceiveMsgListener implements Runnable {
-		@Override
-		public void run() {
-			while (true) {
-				byte[] receivedMsg = crhr.receive();
-				if (receivedMsg != null) {
-					try {
-						System.out.println("cliente recebeu msg");
-						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-						clientListener.onReceive(rcvdMsg);
-					} catch (ClassNotFoundException | IOException
-							| InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				else {
-					try {
-						Thread.sleep(0);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
 		}
 	}
 }

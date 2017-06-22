@@ -56,16 +56,24 @@ public class Application extends JFrame{
         JTextArea channelArea = new JTextArea();
         channelArea.setLineWrap(true);
         channelArea.setWrapStyleWord(true);
-        channelArea.setEditable(false);
+        channelArea.setEditable(false);        
         JScrollPane areaScrollChannel = new JScrollPane(channelArea);
         areaScrollChannel.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        areaScrollChannel.setBorder(
-		    BorderFactory.createCompoundBorder(
-		        BorderFactory.createCompoundBorder(
-		                        BorderFactory.createTitledBorder("Topics"),
-		                        BorderFactory.createEmptyBorder(5,5,5,5)),
-		areaScrollChannel.getBorder()));
+
+        //new topic button
+        JButton newTopic = new JButton("New Topic");
+        
+        //create border channels
+        JPanel borderChannel = new JPanel(new BorderLayout());
+        borderChannel.add(areaScrollChannel, BorderLayout.CENTER);
+        borderChannel.add(newTopic, BorderLayout.SOUTH);
+        borderChannel.setBorder(
+    		    BorderFactory.createCompoundBorder(
+    			        BorderFactory.createCompoundBorder(
+    			                        BorderFactory.createTitledBorder("Topics"),
+    			                        BorderFactory.createEmptyBorder(5,5,5,5)),
+    			        				borderChannel.getBorder()));
 		
 		//subscriber
         JTextArea subscriberArea = new JTextArea();
@@ -75,12 +83,20 @@ public class Application extends JFrame{
         JScrollPane areaScrollSubscriber = new JScrollPane(subscriberArea);
         areaScrollSubscriber.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        areaScrollSubscriber.setBorder(
+        
+        //new subscriber button
+        JButton newClient = new JButton("New Client");
+        
+        //create border subscribers
+        JPanel borderSubscriber = new JPanel(new BorderLayout());
+        borderSubscriber.add(areaScrollSubscriber, BorderLayout.CENTER);
+        borderSubscriber.add(newClient, BorderLayout.SOUTH);
+        borderSubscriber.setBorder(
 		    BorderFactory.createCompoundBorder(
 		        BorderFactory.createCompoundBorder(
 		                        BorderFactory.createTitledBorder("Subscribers"),
 		                        BorderFactory.createEmptyBorder(5,5,5,5)),
-		areaScrollSubscriber.getBorder()));
+		        				borderSubscriber.getBorder()));
         
 		//message
         JTextArea messageArea = new JTextArea();
@@ -89,22 +105,26 @@ public class Application extends JFrame{
         JScrollPane areaScrollMessage = new JScrollPane(messageArea);
         areaScrollMessage.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        areaScrollMessage.setBorder(
+        
+		//send button
+        JButton send = new JButton("Send");
+        
+        //create border message
+        JPanel borderMessage = new JPanel(new BorderLayout());
+        borderMessage.add(areaScrollMessage, BorderLayout.CENTER);
+        borderMessage.add(send, BorderLayout.EAST);
+        borderMessage.setBorder(
 		    BorderFactory.createCompoundBorder(
 		        BorderFactory.createCompoundBorder(
 		                        BorderFactory.createTitledBorder("Message"),
 		                        BorderFactory.createEmptyBorder(5,5,5,5)),
 		areaScrollMessage.getBorder()));
-        
-		//send
-        JButton send = new JButton("Send");
 
 		//add to panels
 		leftPanel.add(areaScrollText);
-		rightPanel.add(areaScrollChannel);
-		rightPanel.add(areaScrollSubscriber);
-		bottomPanel.add(areaScrollMessage, BorderLayout.CENTER);
-		bottomPanel.add(send, BorderLayout.EAST);
+		rightPanel.add(borderChannel);
+		rightPanel.add(borderSubscriber);
+		bottomPanel.add(borderMessage);
 		
 		//add panels to application
 		add(leftPanel, BorderLayout.WEST);

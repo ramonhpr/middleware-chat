@@ -10,5 +10,5 @@ import utils.Message;
  *
  */
 public interface Callback {
-	void onReceive(Message msg);
+	void onReceive();
 }

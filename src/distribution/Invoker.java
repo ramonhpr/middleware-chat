@@ -3,6 +3,7 @@ package distribution;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import utils.Cryptographer;
 import utils.Message;
 import utils.MessageBody;
 import utils.MessageHeader;
@@ -23,17 +24,17 @@ public class Invoker {
 		}
 	}
 
-	public void sendMessage(String ip, int port, String msg, String channel) {
-		MessageBody body = new MessageBody(msg);
-		MessageHeader header = new MessageHeader(ip, port, channel);
-		Message message = new Message(header, body);
-
-		try {
-			srhr.pushOut(marshaller.marshall(message), ip, port);
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void sendMessage(String ip, int port, String msg, String channel) {
+//		MessageBody body = new MessageBody(msg);
+//		MessageHeader header = new MessageHeader(ip, port, channel);
+//		Message message = new Message(header, body);
+//
+//		try {
+//			srhr.pushOut(marshaller.marshall(message), ip, port);
+//		} catch (IOException | InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public void send(byte[] msg, InetSocketAddress destination) {
 		srhr.pushOut(msg, destination.getHostName(), destination.getPort());
@@ -52,6 +53,7 @@ public class Invoker {
 				byte[] receivedMsg = srhr.receive();
 				if (receivedMsg != null) {
 					try {
+						byte[] cpyrcvMsg = (byte[]) receivedMsg.clone();
 						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
 						String host = rcvdMsg.getHeader().getIp();
 						int port = rcvdMsg.getHeader().getPort();
@@ -61,7 +63,9 @@ public class Invoker {
 						QueueManager.publishOnChannel(rcvdMsg);
 						QueueManager.printMap();
 						QueueManager.printMapMsg();
-						broadcast(channel, receivedMsg);
+						
+//						Cryptographer.codec(receivedMsg);
+						broadcast(channel, cpyrcvMsg);
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();

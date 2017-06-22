@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import utils.Cryptographer;
 import utils.Message;
 import distribution.Callback;
 import distribution.Requestor;
@@ -90,37 +91,29 @@ public class ChatClient extends JFrame{
     public static void main(String[] args) throws UnknownHostException{
 //    	new ChatClient();
     	System.out.println("ChatClient inicializado");
-    	Callback callback = new Callback() {
-			@Override
-			public void onReceive(Message msg) {
-				// TODO Auto-generated method stub
-				System.out.println("Client recebeu: "+msg.getBody().getMessage());
-				
-			}
-		};
-    	requestor = new Requestor(4000, "localhost", callback);
-    	requestor.publishMessage("Olá!", "Channel 1");
+    	requestor = new Requestor(4000, "localhost");
+    	requestor.publishMessage("4000: Olá!", "Channel 1");
     	try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	requestor.publishMessage("Olá para o channal 2!", "Channel 2");
+    	requestor.publishMessage("4000: Olá para o channal 2!", "Channel 2");
     	try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	Requestor requestor2 = new Requestor(220, "localhost", callback);
-    	requestor2.publishMessage("Olá do outro user!", "Channel 2");
+    	Requestor requestor2 = new Requestor(220, "localhost");
+    	requestor2.publishMessage("220: Olá do outro user!", "Channel 2");
     	try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	requestor2.publishMessage("como vai aqui é o user 2!", "Channel 1");
+    	requestor2.publishMessage("220: como vai aqui é o user 2!", "Channel 1");
     }
 }

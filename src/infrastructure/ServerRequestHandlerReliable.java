@@ -65,6 +65,7 @@ public class ServerRequestHandlerReliable {
 			outToClient.writeInt(sentMessageSize);
 			outToClient.write(msg,0,sentMessageSize);
 			outToClient.flush();
+			outToClient.close();
 			System.out.println("Message sent!");
 			s.close();
 		} catch (IOException e) {
