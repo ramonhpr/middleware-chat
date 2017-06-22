@@ -1,6 +1,7 @@
 package distribution;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 import utils.Message;
 import utils.MessageBody;
@@ -33,6 +34,16 @@ public class Invoker {
 			e.printStackTrace();
 		}
 	}
+	
+	public void send(byte[] msg, InetSocketAddress destination) {
+		srhr.pushOut(msg, destination.getHostName(), destination.getPort());
+	}
+	
+	public void broadcast(String channel, byte[] message){
+		for(InetSocketAddress subscriber : QueueManager.getSubscribers(channel)){
+			send(message, subscriber);
+		}
+	}
 
 	class ReceiveMsgListener implements Runnable {
 		@Override
@@ -50,6 +61,7 @@ public class Invoker {
 						QueueManager.publishOnChannel(rcvdMsg);
 						QueueManager.printMap();
 						QueueManager.printMapMsg();
+						broadcast(channel, receivedMsg);
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();
