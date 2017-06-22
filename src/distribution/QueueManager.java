@@ -10,12 +10,6 @@ public class QueueManager {
 	private static Map<String,ArrayList<InetSocketAddress>> map = new HashMap<>();
 	private static Map<String,ArrayList<Message>> mapMsg = new HashMap<>();
 	
-	public QueueManager()
-	{
-		map = new HashMap<>();
-	}
-	
-	
 	public static void subscribeOnChannel(String channel, String host, int port)
 	{
 		ArrayList<InetSocketAddress> l = null;
@@ -42,7 +36,7 @@ public class QueueManager {
 	{
 		InetSocketAddress i = new InetSocketAddress(message.getHeader().getIp(), message.getHeader().getPort());
 		String channel = null;
-		//percorre a map procurando o channel que o usuario está incrito
+		//percorre a map procurando o channel que o usuario estï¿½ incrito
 		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
 			if(entry.getValue().contains(i))
 			{

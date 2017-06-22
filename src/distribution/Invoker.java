@@ -7,7 +7,7 @@ import infrastructure.ServerRequestHandlerReliable;
 public class Invoker {
 	private Marshaller marshaller;
 	private ServerRequestHandlerReliable srhr;
-	private QueueManager queueManager;
+//	private QueueManager queueManager;
 
 	public Invoker() {
 		try {
@@ -43,10 +43,10 @@ public class Invoker {
 						int port = rcvdMsg.getHeader().getPort();
 						String channel = rcvdMsg.getHeader().getChannel();
 						String message = rcvdMsg.getBody().getMessage();
-						queueManager.subscribeOnChannel(channel, host, port);
-						queueManager.publishOnChannel(rcvdMsg);
-						queueManager.printMap();
-						queueManager.printMapMsg();
+						QueueManager.subscribeOnChannel(channel, host, port);
+						QueueManager.publishOnChannel(rcvdMsg);
+						QueueManager.printMap();
+						QueueManager.printMapMsg();
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();
