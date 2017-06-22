@@ -7,8 +7,8 @@ package utils;
  * @author avss
  *
  */
-public class ArrayUtils {
-	public static void reverse(byte[] array){
+public class Cryptographer {
+	public static void codec(byte[] array){
 		int size = array.length;
 		byte[] yarra = new byte[size];
 		for(int i = 0; i < size; i++){
