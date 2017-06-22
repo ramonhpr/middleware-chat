@@ -64,21 +64,21 @@ public class QueueManager {
 	}
 	
 	public static void printMap() {
-		System.out.println("Lista de inscritos:\n");
+		System.out.println("\nLista de inscritos:");
 		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
-			System.out.println("channel: "+entry.getKey());
+			System.out.println("	channel: "+entry.getKey());
 			for (InetSocketAddress subscriber : entry.getValue()) {
-				System.out.println("subscriber: "+subscriber.toString());
+				System.out.println("		subscriber: "+subscriber.toString());
 			}
 		}
 	}
 	
 	public static void printMapMsg() {
-		System.out.println("Lista de mensagens:\n");
+		System.out.println("\nLista de mensagens:");
 		for (Entry<String, ArrayList<Message>> entry : mapMsg.entrySet()) {
-			System.out.println("channel: "+entry.getKey());
+			System.out.println("	channel: "+entry.getKey());
 			for (Message subscriber : entry.getValue()) {
-				System.out.println("subscriber: "+subscriber.toString());
+				System.out.println("		subscriber: "+subscriber.toString());
 			}
 		}
 	}

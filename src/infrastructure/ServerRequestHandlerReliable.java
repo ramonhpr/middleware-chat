@@ -88,13 +88,13 @@ public class ServerRequestHandlerReliable {
 	//				while (true) {
 	//					System.out.println("Read object from port "+ connectionSocket.getPort());
 						receivedMessageSize = inFromClient.readInt();
-						System.out.println("size: "+receivedMessageSize);
+//						System.out.println("size: "+receivedMessageSize);
 			        	request = new byte[receivedMessageSize];
 	                	inFromClient.read(request, 0, receivedMessageSize);
 						queueIN.add(request);
-						System.out.println("queueIn is empty:" + queueIN.isEmpty());
+//						System.out.println("queueIn is empty:" + queueIN.isEmpty());
 						inFromClient.close();
-						System.out.println("size of queueIn is: "+queueIN.size());
+//						System.out.println("size of queueIn is: "+queueIN.size());
 	//				}
 					connectionSocket.close();
 				} catch (IOException e1) {

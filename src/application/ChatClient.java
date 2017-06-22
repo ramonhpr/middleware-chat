@@ -88,7 +88,7 @@ public class ChatClient extends JFrame{
 	}
 	
     public static void main(String[] args) throws UnknownHostException{
-    	new ChatClient();
+//    	new ChatClient();
     	System.out.println("ChatClient inicializado");
     	Callback callback = new Callback() {
 			@Override
