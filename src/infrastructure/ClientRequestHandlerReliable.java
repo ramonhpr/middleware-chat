@@ -102,6 +102,12 @@ public class ClientRequestHandlerReliable {
 	            } catch (Exception e1) {
 	            	e1.printStackTrace();
 	            }
+				try {
+					Thread.sleep(0);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
     }

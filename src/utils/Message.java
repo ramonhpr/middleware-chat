@@ -15,6 +15,11 @@ public class Message implements Serializable {
     public Message() {
     }
 
+    public Message(String msg) {
+    	header = new MessageHeader("",0,"");
+    	body = new MessageBody(msg);
+    }
+
     public MessageBody getBody() {
         return body;
     }

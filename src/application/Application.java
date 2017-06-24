@@ -3,27 +3,40 @@ package application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class Application extends JFrame implements MouseListener{
+import distribution.Callback;
+import distribution.Invoker;
+import utils.Message;
+
+public class Application extends JFrame implements MouseListener, FocusListener{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static ChatClient chat;
 	private int width = 800;
 	private int height = 480;
+	private static JTextArea chatArea, messageArea;
+	private static JList<String> channelList, subscriberList;
+	private static Vector<String> channelVector, subscriberVector;
 	
 	// Constructor to setup GUI components and event handlers
 	public Application() {
@@ -40,7 +53,7 @@ public class Application extends JFrame implements MouseListener{
 		bottomPanel.setPreferredSize(new Dimension((int)(width), (int)(height*0.2)));
 		
 		//chat
-        JTextArea chatArea = new JTextArea();
+        chatArea = new JTextArea();
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         chatArea.setEditable(false);
@@ -55,11 +68,10 @@ public class Application extends JFrame implements MouseListener{
 		areaScrollText.getBorder()));
 		
 		//channel
-        JTextArea channelArea = new JTextArea();
-        channelArea.setLineWrap(true);
-        channelArea.setWrapStyleWord(true);
-        channelArea.setEditable(false);        
-        JScrollPane areaScrollChannel = new JScrollPane(channelArea);
+        channelVector = new Vector<String>();
+        channelList = new JList<String>(channelVector);
+        channelList.addFocusListener(this);
+        JScrollPane areaScrollChannel = new JScrollPane(channelList);
         areaScrollChannel.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -79,22 +91,21 @@ public class Application extends JFrame implements MouseListener{
     			        				borderChannel.getBorder()));
 		
 		//subscriber
-        JTextArea subscriberArea = new JTextArea();
-        subscriberArea.setLineWrap(true);
-        subscriberArea.setWrapStyleWord(true);
-        subscriberArea.setEditable(false);
-        JScrollPane areaScrollSubscriber = new JScrollPane(subscriberArea);
+        subscriberVector = new Vector<String>();
+        subscriberList = new JList<String>(subscriberVector);
+        subscriberList.setEnabled(false);
+        JScrollPane areaScrollSubscriber = new JScrollPane(subscriberList);
         areaScrollSubscriber.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         
         //new subscriber button
-        JButton newClient = new JButton("New Subscriber");
-        newClient.addMouseListener(this);
+//        JButton newClient = new JButton("New Subscriber");
+//        newClient.addMouseListener(this);
         
         //create border subscribers
         JPanel borderSubscriber = new JPanel(new BorderLayout());
         borderSubscriber.add(areaScrollSubscriber, BorderLayout.CENTER);
-        borderSubscriber.add(newClient, BorderLayout.SOUTH);
+//        borderSubscriber.add(newClient, BorderLayout.SOUTH);
         borderSubscriber.setBorder(
 		    BorderFactory.createCompoundBorder(
 		        BorderFactory.createCompoundBorder(
@@ -103,7 +114,7 @@ public class Application extends JFrame implements MouseListener{
 		        				borderSubscriber.getBorder()));
         
 		//message
-        JTextArea messageArea = new JTextArea();
+        messageArea = new JTextArea();
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
         JScrollPane areaScrollMessage = new JScrollPane(messageArea);
@@ -146,7 +157,63 @@ public class Application extends JFrame implements MouseListener{
 	}
 	
 	public static void main(String[] args) {
+		chat = new ChatClient(new Callback() {
+			
+			@Override
+			public void onReceive(String msg) {
+				// TODO Auto-generated method stub
+//				byte[] receivedMsg;
+
+//				receivedMsg = crhr.receive();
+//				if (receivedMsg != null) {
+//					try {
+//						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+//						System.out.println(port+" recebeu msg: "+rcvdMsg.getBody().getMessage());
+//					} catch (ClassNotFoundException | IOException
+//							| InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//				}
+				System.out.println("recebeu: "+msg);
+				if(msg.indexOf(':') != -1 && msg.substring(0,msg.indexOf(':')).equals("topics")){
+					String string = msg.substring(msg.indexOf(':')+1);
+					string = string.replace("[", "");
+					string = string.replace("]", "");
+					string = string.replace(" ", "");
+					String[] topics = string.split(",");
+					channelVector.clear();
+					for(String topic : topics) {
+						channelVector.add(topic);
+					}
+					channelList.setListData(channelVector);
+					channelList.setSelectedIndex(0);
+					chat.getSubscribers(channelVector.firstElement());
+				}
+				else if(msg.indexOf(':') != -1 && msg.substring(0,msg.indexOf(':')).equals("subscribers")){
+						String string = msg.substring(msg.indexOf(':')+1);
+						string = string.replace("[", "");
+						string = string.replace("]", "");
+						string = string.replace(" ", "");
+						String[] subscribers = string.split(",");
+						subscriberVector.clear();
+						for(String subscriber : subscribers) {
+							subscriberVector.add(subscriber);
+						}
+						subscriberList.setListData(subscriberVector);
+				}
+				else {
+					chatArea.setText(chatArea.getText()+msg+"\n");
+				}
+			}
+
+			@Override
+			public void onReceive() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		new Application();
+		chat.new NewSubscriber();
 	}
 
 	@Override
@@ -179,8 +246,31 @@ public class Application extends JFrame implements MouseListener{
 		JButton button = (JButton) e.getSource();
 		switch (button.getText()) {
 		case "New Subscriber":
-			new ChatClient();
+			//quando cria novo subscriber o outro é sobrescrito
+			chat.new NewSubscriber();
+			break;
+		case "New Topic":
+			chat.new NewTopic();
+			break;
+		case "Send":
+			chat.send(messageArea.getText());
+			messageArea.setText("");
 			break;
 		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		JList jList = (JList) e.getSource();
+		String selected = channelVector.get(jList.getSelectedIndex());
+		chatArea.setText("");
+		chat.getSubscribers(selected);
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

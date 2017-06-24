@@ -16,10 +16,50 @@ public class Invoker {
 
 	public Invoker() {
 		try {
-			srhr = new ServerRequestHandlerReliable();
+			srhr = new ServerRequestHandlerReliable(new Callback() {
+				
+				@Override
+				public void onReceive(String msg) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onReceive() {
+					// TODO Auto-generated method stub
+					byte[] receivedMsg = srhr.receive();
+					if (receivedMsg != null) {
+						try {
+							byte[] cpyrcvMsg = (byte[]) receivedMsg.clone();
+							Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+							String host = rcvdMsg.getHeader().getIp();
+							int port = rcvdMsg.getHeader().getPort();
+							String channel = rcvdMsg.getHeader().getChannel();
+							String message = rcvdMsg.getBody().getMessage();
+							queueManager.subscribeOnChannel(channel, host, port);
+							queueManager.publishOnChannel(rcvdMsg);
+							queueManager.printMap();
+							queueManager.printMapMsg();
+							if(channel.equals("all") && message.equals("getTopics")){
+								sendTopics(host,port);
+							}
+							else if(message.equals("getSubscribers")){
+								sendSubscribers(host,port,channel);
+							}
+							else {
+								broadcast(channel, cpyrcvMsg);
+							}
+						} catch (ClassNotFoundException | IOException
+								| InterruptedException e) {
+							e.printStackTrace();
+							System.out.println("nao retornou a msg");
+						}
+					}
+				}
+			});
 			marshaller = new Marshaller();
 			queueManager = new QueueManager();
-			new Thread(new ReceiveMsgListener()).start();
+//			new Thread(new ReceiveMsgListener()).start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -46,41 +86,65 @@ public class Invoker {
 			send(message, subscriber);
 		}
 	}
-
-	class ReceiveMsgListener implements Runnable {
-		@Override
-		public void run() {
-			while (true) {
-				byte[] receivedMsg = srhr.receive();
-				if (receivedMsg != null) {
-					try {
-						byte[] cpyrcvMsg = (byte[]) receivedMsg.clone();
-						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-						String host = rcvdMsg.getHeader().getIp();
-						int port = rcvdMsg.getHeader().getPort();
-						String channel = rcvdMsg.getHeader().getChannel();
-						String message = rcvdMsg.getBody().getMessage();
-						queueManager.subscribeOnChannel(channel, host, port);
-						queueManager.publishOnChannel(rcvdMsg);
-						queueManager.printMap();
-						queueManager.printMapMsg();
-						
-//						Cryptographer.codec(receivedMsg);
-						broadcast(channel, cpyrcvMsg);
-					} catch (ClassNotFoundException | IOException
-							| InterruptedException e) {
-						e.printStackTrace();
-						System.out.println("nao retornou a msg");
-					}
-				}
-				else {
-					try {
-						Thread.sleep(0);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+	
+	public void sendTopics(String host, int port) {
+		try {
+			send(marshaller.marshall(new Message(queueManager.getTopicsString())),new InetSocketAddress(host,port));
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
+	public void sendSubscribers(String host, int port, String channel) {
+		try {
+			send(marshaller.marshall(new Message(queueManager.getSubscribersString(channel))),new InetSocketAddress(host,port));
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+//	class ReceiveMsgListener implements Runnable {
+//		@Override
+//		public void run() {
+//			while (true) {
+//				byte[] receivedMsg = srhr.receive();
+//				if (receivedMsg != null) {
+//					try {
+//						byte[] cpyrcvMsg = (byte[]) receivedMsg.clone();
+//						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+//						String host = rcvdMsg.getHeader().getIp();
+//						int port = rcvdMsg.getHeader().getPort();
+//						String channel = rcvdMsg.getHeader().getChannel();
+//						String message = rcvdMsg.getBody().getMessage();
+//						queueManager.subscribeOnChannel(channel, host, port);
+//						queueManager.publishOnChannel(rcvdMsg);
+//						queueManager.printMap();
+//						queueManager.printMapMsg();
+//						if(channel.equals("all") && message.equals("getTopics")){
+//							sendTopics(host,port);
+//						}
+//						else if(message.equals("getSubscribers")){
+//							sendSubscribers(host,port,channel);
+//						}
+//						else {
+//							broadcast(channel, cpyrcvMsg);
+//						}
+//					} catch (ClassNotFoundException | IOException
+//							| InterruptedException e) {
+//						e.printStackTrace();
+//						System.out.println("nao retornou a msg");
+//					}
+//				}
+//				else {
+//					try {
+//						Thread.sleep(0);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}
+//	}
 }

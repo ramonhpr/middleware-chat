@@ -2,9 +2,11 @@ package distribution;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import utils.Message;
@@ -33,12 +35,15 @@ public class QueueManager {
 		InetSocketAddress i = new InetSocketAddress(host, port);
 		//se o incrito tiver em uma lista, primeiro tira dessa lista e depois coloca no novo canal
 		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
-			if(entry.getValue().contains(i))
+			//se nao for o cannal em que todos estão
+			if(!entry.getKey().equals("all") && entry.getValue().contains(i))
 			{
 				entry.getValue().remove(i);
 			}
 		}
-		l.add(i);
+		if(!l.contains(i)){
+			l.add(i);
+		}
 	}
 	
 	public List<InetSocketAddress> getSubscribers(String channel){
@@ -88,6 +93,22 @@ public class QueueManager {
 				System.out.println("		subscriber: "+subscriber.toString());
 			}
 		}
+	}
+	
+	//retorna canal com seus inscritos em forma de string
+	public String getTopicsString() {
+		Set<String> keys = map.keySet();
+		String[] topics = (String[]) keys.toArray(new String[keys.size()]);
+		System.out.println(topics.toString());	
+		return "topics:"+Arrays.toString(topics);
+	}
+	
+	//retorna canal com seus inscritos em forma de string
+	public String getSubscribersString(String channel) {
+		List<InetSocketAddress> list = map.get(channel);
+		Object[] subscribers = list.toArray();
+		System.out.println(subscribers.toString());	
+		return "subscribers:"+Arrays.toString(subscribers);
 	}
 	
 //	public static void main(String[] args) {

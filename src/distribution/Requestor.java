@@ -23,11 +23,13 @@ public class Requestor {
 	private Marshaller marshaller;
 	private ClientRequestHandlerReliable crhr;
 	private Callback clientListener;
+	private Callback applicationListener;
 
-	public Requestor(final int port, String ip) {
+	public Requestor(final int port, String ip, final Callback applicationCallback) {
 		this.port = port;
 		this.ip = ip;
 		marshaller = new Marshaller();
+		applicationListener = applicationCallback;
 		clientListener = new Callback() {
 			
 			@Override
@@ -39,12 +41,20 @@ public class Requestor {
 				if (receivedMsg != null) {
 					try {
 						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-						System.out.println(port+" recebeu msg: "+rcvdMsg.getBody().getMessage());
+						String msg = rcvdMsg.getBody().getMessage();
+						System.out.println(port+" recebeu msg: "+msg);
+						applicationCallback.onReceive(msg);
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
+			}
+
+			@Override
+			public void onReceive(String msg) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		crhr = new ClientRequestHandlerReliable(ip, port, clientListener);

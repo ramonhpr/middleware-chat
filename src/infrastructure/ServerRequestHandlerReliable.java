@@ -11,12 +11,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 import utils.Message;
+import distribution.Callback;
 import distribution.Marshaller;
 
 /**
@@ -35,12 +37,15 @@ public class ServerRequestHandlerReliable {
 
 	private Queue<byte[]> queueIN;
 	private Queue<byte[]> queueOUT;
+	
+	private Callback serverCallback;
 
-	public ServerRequestHandlerReliable() throws IOException {
+	public ServerRequestHandlerReliable(Callback serverCallback) throws IOException {
 		queueIN = new ArrayDeque<byte[]>();
 		queueOUT = new ArrayDeque<byte[]>();
 		port = 1313;
 		welcomeSocket = new ServerSocket(port);
+		this.serverCallback = serverCallback;
 //			/*FIXME: remove this loop on constructor
 //			 * Make a thread just to accept connection and a array of 
 //			 * socket/thread to handle them */
@@ -70,7 +75,8 @@ public class ServerRequestHandlerReliable {
 			s.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			pushOut(msg, host, port);
+			//quando user sai a port ainda ta na lista de inscrito, ai da error ConnectException
+//			pushOut(msg, host, port);
 		}
 	}
 	
@@ -85,22 +91,22 @@ public class ServerRequestHandlerReliable {
 				try {
 					connectionSocket = welcomeSocket.accept();
 		            System.out.println("Accept connection");
-					inFromClient = new DataInputStream(connectionSocket.getInputStream());
+		            inFromClient = new DataInputStream(connectionSocket.getInputStream());
 	//				while (true) {
-	//					System.out.println("Read object from port "+ connectionSocket.getPort());
+						System.out.println("Read object from port "+ connectionSocket.getPort());
 						receivedMessageSize = inFromClient.readInt();
-//						System.out.println("size: "+receivedMessageSize);
+						System.out.println("size: "+receivedMessageSize);
 			        	request = new byte[receivedMessageSize];
 	                	inFromClient.read(request, 0, receivedMessageSize);
 						queueIN.add(request);
-//						System.out.println("queueIn is empty:" + queueIN.isEmpty());
+						System.out.println("queueIn is empty:" + queueIN.isEmpty());
 						inFromClient.close();
-//						System.out.println("size of queueIn is: "+queueIN.size());
+						System.out.println("size of queueIn is: "+queueIN.size());
+						serverCallback.onReceive();
 	//				}
 					connectionSocket.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
-					return;
 				}
 			}
 		}
