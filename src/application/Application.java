@@ -264,8 +264,9 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 		// TODO Auto-generated method stub
 		JList jList = (JList) e.getSource();
 		String selected = channelVector.get(jList.getSelectedIndex());
-		chatArea.setText("");
-		chat.getSubscribers(selected);
+		if(chat.getSubscribers(selected)){
+			chatArea.setText("");
+		}
 	}
 
 	@Override

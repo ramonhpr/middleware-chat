@@ -429,9 +429,15 @@ public class ChatClient{
 //		}
 	}
 	
-	public void getSubscribers(String topic) {
-		topicName = topic;
-		requestor.publishMessage("getSubscribers", "all");
+	public boolean getSubscribers(String topic) {
+		if(topicName != null && topicName.equals(topic)) {
+			return false;
+		}
+		else {
+			topicName = topic;
+			requestor.publishMessage("getSubscribers", "all");
+			return true;
+		}
 	}
 	
 	public void send(String msg) {
