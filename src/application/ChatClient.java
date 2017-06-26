@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.Callable;
 
 import javax.sound.sampled.BooleanControl;
@@ -147,7 +148,8 @@ public class ChatClient{
 		public NewSubscriber() {
 //			nameField = new JTextField("clientName");
 			hostField = new JTextField("localhost");
-			portField = new JTextField("4000");
+			Random random = new Random();
+			portField = new JTextField(String.valueOf(1023+random.nextInt(65535-1023)));
 
 //			JLabel nameLabel = new JLabel("Name: ");
 //			nameLabel.setLabelFor(nameField);
