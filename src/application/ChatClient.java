@@ -50,14 +50,14 @@ public class ChatClient{
 //		new ChatClient();
 //		System.out.println("ChatClient inicializado");
 //		Requestor requestor = new Requestor(4000, "localhost");
-//		requestor.publishMessage("4000: Ol·!", "Channel 1");
+//		requestor.publishMessage("4000: Ol√°!", "Channel 1");
 //		try {
 //			Thread.sleep(10000);
 //		} catch (InterruptedException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-//		requestor.publishMessage("4000: Ol· para o channal 2!", "Channel 2");
+//		requestor.publishMessage("4000: Ol√° para o channal 2!", "Channel 2");
 //		try {
 //			Thread.sleep(10000);
 //		} catch (InterruptedException e) {
@@ -65,14 +65,14 @@ public class ChatClient{
 //			e.printStackTrace();
 //		}
 //		Requestor requestor2 = new Requestor(220, "localhost");
-//		requestor2.publishMessage("220: Ol· do outro user!", "Channel 2");
+//		requestor2.publishMessage("220: Ol√° do outro user!", "Channel 2");
 //		try {
 //			Thread.sleep(10000);
 //		} catch (InterruptedException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-//		requestor2.publishMessage("220: como vai aqui È o user 2!", "Channel 1");
+//		requestor2.publishMessage("220: como vai aqui √© o user 2!", "Channel 1");
 	}
 
 	public class Warning extends JFrame implements MouseListener{
@@ -224,10 +224,10 @@ public class ChatClient{
 				String port = portField.getText();
 				int portNumber = 0;
 
-				//compara com o padr„o valido
+				//compara com o padr√£o valido
 //				boolean nameValid = !name.equals("");
 				boolean hostValid = host.matches("(\\d{1,3}\\.){3}\\d{1,3}|localhost");
-				boolean portValid= port.matches("\\d{1,5}");
+				boolean portValid= port.matches("\\d{4,5}");
 
 //				if(!nameValid){
 //					new Warning("Name cannot be empty");
@@ -239,12 +239,8 @@ public class ChatClient{
 				}
 				if(portValid){
 					portNumber = Integer.parseInt(port);
-					//se port for valido, verifica se est· dentro do limite
-					portValid = portNumber <= 65535;
-				}
-				else{
-					System.out.println("Port number must be <= 65535");
-					new Warning("Port number must be <= 65535");
+					//se port for valido, verifica se est√° dentro do limite
+					portValid = portNumber <= 65535 && portNumber >= 1024;
 				}
 
 				if(/*nameValid && */hostValid && portValid){
@@ -256,6 +252,8 @@ public class ChatClient{
 					createSubscriber();
 					new Warning("New Subscriber created: "+host+"\\"+String.valueOf(port));
 					dispose();
+				} else {
+					new Warning("Port number must be >= 1024 and <= 65535");
 				}
 
 				break;
