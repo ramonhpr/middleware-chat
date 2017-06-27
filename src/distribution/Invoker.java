@@ -7,6 +7,7 @@ import utils.Cryptographer;
 import utils.Message;
 import utils.MessageBody;
 import utils.MessageHeader;
+import infrastructure.ServerCallback;
 import infrastructure.ServerRequestHandlerReliable;
 
 public class Invoker {
@@ -16,12 +17,15 @@ public class Invoker {
 
 	public Invoker() {
 		try {
-			srhr = new ServerRequestHandlerReliable(new Callback() {
-				
+			srhr = new ServerRequestHandlerReliable(new ServerCallback() {		
 				@Override
 				public void onReceive(String msg) {
-					// TODO Auto-generated method stub
 					
+				}
+				
+				@Override
+				public void onDisconnect(InetSocketAddress iAddress) {
+					queueManager.remove(iAddress);
 				}
 				
 				@Override

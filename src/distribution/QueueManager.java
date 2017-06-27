@@ -21,6 +21,10 @@ public class QueueManager {
 		mapMsg = new HashMap<>();
 	}
 	
+	public void remove(InetSocketAddress iAddress){
+		map.remove(iAddress);
+	}
+	
 	public void subscribeOnChannel(String channel, String host, int port)
 	{
 		ArrayList<InetSocketAddress> l = null;

@@ -3,7 +3,6 @@
  */
 package distribution;
 
-import utils.Message;
 
 /**
  * @author avss
@@ -11,5 +10,6 @@ import utils.Message;
  */
 public interface Callback {
 	void onReceive();
-	void onReceive(String msg);
+	void onReceive(String msg); 
 }
+

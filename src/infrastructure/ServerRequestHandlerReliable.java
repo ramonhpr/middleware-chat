@@ -5,21 +5,18 @@
  */
 package infrastructure;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 
-import utils.Message;
 import distribution.Callback;
-import distribution.Marshaller;
 
 /**
  * 
@@ -38,11 +35,14 @@ public class ServerRequestHandlerReliable {
 	private Queue<byte[]> queueIN;
 	private Queue<byte[]> queueOUT;
 	
-	private Callback serverCallback;
+	private Map<InetSocketAddress, Integer> numErrors;
+	
+	private ServerCallback serverCallback;
 
-	public ServerRequestHandlerReliable(Callback serverCallback) throws IOException {
+	public ServerRequestHandlerReliable(ServerCallback serverCallback) throws IOException {
 		queueIN = new ArrayDeque<byte[]>();
 		queueOUT = new ArrayDeque<byte[]>();
+		numErrors = new HashMap<InetSocketAddress, Integer>();
 		port = 1313;
 		welcomeSocket = new ServerSocket(port);
 		this.serverCallback = serverCallback;
@@ -75,8 +75,20 @@ public class ServerRequestHandlerReliable {
 			s.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			//quando user sai a port ainda ta na lista de inscrito, ai da error ConnectException
-//			pushOut(msg, host, port);
+			InetSocketAddress iAddress = new InetSocketAddress(host, port);
+			Integer count = numErrors.get(iAddress);
+			if(count == null){
+				count = new Integer(0);
+			}
+			//if time maior q x
+			count++;
+			if(count > 3){
+				// tira do canal
+				serverCallback.onDisconnect(iAddress);
+			} else{
+				//quando user sai a port ainda ta na lista de inscrito, ai da error ConnectException
+				pushOut(msg, host, port);
+			}
 		}
 	}
 	
