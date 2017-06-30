@@ -37,6 +37,7 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 	private static JTextArea chatArea, messageArea;
 	private static JList<String> channelList, subscriberList;
 	private static Vector<String> channelVector, subscriberVector;
+	private static int channelIndex;
 	
 	// Constructor to setup GUI components and event handlers
 	public Application() {
@@ -174,20 +175,25 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 //						e.printStackTrace();
 //					}
 //				}
-				System.out.println("recebeu: "+msg);
+//				System.out.println("recebeu: "+msg);
 				if(msg.indexOf(':') != -1 && msg.substring(0,msg.indexOf(':')).equals("topics")){
 					String string = msg.substring(msg.indexOf(':')+1);
 					string = string.replace("[", "");
 					string = string.replace("]", "");
 					string = string.replace(" ", "");
 					String[] topics = string.split(",");
-					channelVector.clear();
+//					channelVector.clear();
 					for(String topic : topics) {
-						channelVector.add(topic);
+						if(!channelVector.contains(topic)) {
+							channelVector.add(topic);
+							if(topic.equals(chat.getTopicName())){
+								channelIndex = channelVector.indexOf(topic);
+							}
+						}
 					}
 					channelList.setListData(channelVector);
-					channelList.setSelectedIndex(0);
-					chat.getSubscribers(channelVector.firstElement());
+					channelList.setSelectedIndex(channelIndex);
+//					chat.getSubscribers(channelVector.firstElement());
 				}
 				else if(msg.indexOf(':') != -1 && msg.substring(0,msg.indexOf(':')).equals("subscribers")){
 						String string = msg.substring(msg.indexOf(':')+1);
@@ -263,7 +269,8 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 	public void focusGained(FocusEvent e) {
 		// TODO Auto-generated method stub
 		JList jList = (JList) e.getSource();
-		String selected = channelVector.get(jList.getSelectedIndex());
+		channelIndex = jList.getSelectedIndex();
+		String selected = channelVector.get(channelIndex);
 		if(chat.getSubscribers(selected)){
 			chatArea.setText("");
 		}

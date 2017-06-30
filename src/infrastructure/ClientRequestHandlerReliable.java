@@ -93,7 +93,7 @@ public class ClientRequestHandlerReliable {
                 	inFromServer.read(message, 0, size);
                 	queueIN.add(message);
                 	callback.onReceive();
-                	System.out.println("client recebeu msg");
+//                	System.out.println("client recebeu msg");
 //                	Marshaller m = new Marshaller();
 //                	Message msg = m.unmarshall(message);
 //                	System.out.println(msg.toString());

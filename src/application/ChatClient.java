@@ -372,8 +372,8 @@ public class ChatClient{
 				}
 				else {
 					System.out.println("New Topic created: "+topic);
-					topicName = topic;
-					createTopic();
+//					topicName = topic;
+					createTopic(topic);
 					new Warning("New Topic created: "+topic);
 					dispose();
 				}
@@ -413,9 +413,10 @@ public class ChatClient{
 	}
 
 	
-	private void createTopic() {
+	private void createTopic(String topic) {
 		//informa a todos que um novo topico foi criado
 //		requestor.publishMessage("Topic "+topicName+" created by "+subscriberName, topicName);
+		topicName = topic;
 		requestor.publishMessage("Topic "+topicName+" created", topicName);
 		requestor.publishMessage("getTopics", "all");
 		getSubscribers(topicName);
@@ -436,6 +437,7 @@ public class ChatClient{
 		else {
 			topicName = topic;
 			requestor.publishMessage("getSubscribers", "all");
+			requestor.publishMessage(subscriberHost+"/"+subscriberPort+" entrou no "+topicName, topicName);
 			return true;
 		}
 	}
@@ -444,5 +446,9 @@ public class ChatClient{
 //		msg = subscriberName+": "+msg;
 		msg = subscriberHost+"/"+subscriberPort+": "+msg;
 		requestor.publishMessage(msg, topicName);
+	}
+	
+	public String getTopicName(){
+		return topicName;
 	}
 }

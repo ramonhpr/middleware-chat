@@ -43,7 +43,7 @@ public class Invoker {
 							queueManager.subscribeOnChannel(channel, host, port);
 							queueManager.publishOnChannel(rcvdMsg);
 							queueManager.printMap();
-							queueManager.printMapMsg();
+//							queueManager.printMapMsg();
 							if(channel.equals("all") && message.equals("getTopics")){
 //								sendTopics(host,port);
 								broadcastTopics();
