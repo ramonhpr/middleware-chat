@@ -49,7 +49,8 @@ public class Invoker {
 								broadcastTopics();
 							}
 							else if(message.equals("getSubscribers")){
-								sendSubscribers(host,port,channel);
+//								sendSubscribers(host,port,channel);
+								broadcastSubscribers();
 							}
 							else {
 								broadcast(channel, cpyrcvMsg);
@@ -95,6 +96,12 @@ public class Invoker {
 	public void broadcastTopics(){
 		for(InetSocketAddress subscriber : queueManager.getSubscribers("all")){
 			sendTopics(subscriber.getHostName(), subscriber.getPort());
+		}
+	}
+	
+	public void broadcastSubscribers(){
+		for(InetSocketAddress subscriber : queueManager.getSubscribers("all")){
+			sendSubscribers(subscriber.getHostName(), subscriber.getPort(), queueManager.getSubscriberChannel(subscriber));
 		}
 	}
 	

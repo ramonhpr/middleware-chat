@@ -71,7 +71,8 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 		//channel
         channelVector = new Vector<String>();
         channelList = new JList<String>(channelVector);
-        channelList.addFocusListener(this);
+//        channelList.addFocusListener(this);
+        channelList.addMouseListener(this);
         JScrollPane areaScrollChannel = new JScrollPane(channelList);
         areaScrollChannel.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -228,7 +229,31 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		if(e.getSource().getClass().getSimpleName().equals("JButton")){
+			JButton button = (JButton) e.getSource();
+			switch (button.getText()) {
+				case "New Subscriber":
+					//quando cria novo subscriber o outro é sobrescrito
+					chat.new NewSubscriber();
+					break;
+				case "New Topic":
+					chat.new NewTopic();
+					chatArea.setText("");
+					break;
+				case "Send":
+					chat.send(messageArea.getText());
+					messageArea.setText("");
+					break;
+			}
+		}
+		if(e.getSource().getClass().getSimpleName().equals("JList")){
+			JList jList = (JList) e.getSource();
+			channelIndex = jList.getSelectedIndex();
+			String selected = channelVector.get(channelIndex);
+			if(chat.getSubscribers(selected)){
+				chatArea.setText("");
+			}
+		}		
 	}
 
 	@Override
@@ -252,32 +277,11 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		JButton button = (JButton) e.getSource();
-		switch (button.getText()) {
-		case "New Subscriber":
-			//quando cria novo subscriber o outro é sobrescrito
-			chat.new NewSubscriber();
-			break;
-		case "New Topic":
-			chat.new NewTopic();
-			chatArea.setText("");
-			break;
-		case "Send":
-			chat.send(messageArea.getText());
-			messageArea.setText("");
-			break;
-		}
 	}
 
 	@Override
 	public void focusGained(FocusEvent e) {
 		// TODO Auto-generated method stub
-		JList jList = (JList) e.getSource();
-		channelIndex = jList.getSelectedIndex();
-		String selected = channelVector.get(channelIndex);
-		if(chat.getSubscribers(selected)){
-			chatArea.setText("");
-		}
 	}
 
 	@Override

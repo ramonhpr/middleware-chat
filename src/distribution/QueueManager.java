@@ -28,6 +28,17 @@ public class QueueManager {
 	public void subscribeOnChannel(String channel, String host, int port)
 	{
 		ArrayList<InetSocketAddress> l = null;
+		InetSocketAddress i = new InetSocketAddress(host, port);
+		
+		//se o incrito tiver em uma lista, primeiro tira dessa lista e depois coloca no novo canal
+		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
+			//se nao for o cannal em que todos estão
+			if(!entry.getKey().equals("all") && entry.getValue().contains(i))
+			{
+				map.get(entry.getKey()).remove(i);
+			}
+		}
+		
 		//se nao tiver lista de inscritos, cria
 		if(map.get(channel) == null)
 		{
@@ -35,15 +46,6 @@ public class QueueManager {
 			map.put(channel, l);
 		} else {
 			l = map.get(channel);
-		}
-		InetSocketAddress i = new InetSocketAddress(host, port);
-		//se o incrito tiver em uma lista, primeiro tira dessa lista e depois coloca no novo canal
-		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
-			//se nao for o cannal em que todos estão
-			if(entry != null && !entry.getKey().equals("all") && entry.getValue().contains(i))
-			{
-				entry.getValue().remove(i);
-			}
 		}
 		if(!l.contains(i)){
 			l.add(i);
@@ -103,16 +105,35 @@ public class QueueManager {
 	public String getTopicsString() {
 		Set<String> keys = map.keySet();
 		String[] topics = (String[]) keys.toArray(new String[keys.size()]);
-		System.out.println(topics.toString());	
+//		System.out.println(topics.toString());	
 		return "topics:"+Arrays.toString(topics);
 	}
 	
 	//retorna canal com seus inscritos em forma de string
 	public String getSubscribersString(String channel) {
 		List<InetSocketAddress> list = map.get(channel);
-		Object[] subscribers = list.toArray();
-		System.out.println(subscribers.toString());	
-		return "subscribers:"+Arrays.toString(subscribers);
+		if(list != null) {
+			Object[] subscribers = list.toArray();
+			return "subscribers:"+Arrays.toString(subscribers);
+		}
+		else {
+			return "subscribers:";
+		}
+	}
+	
+	public String getSubscriberChannel(InetSocketAddress sub) {
+		String key = null;
+		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
+			if(!entry.getKey().equals("all")){
+				for (InetSocketAddress subscriber : entry.getValue()) {
+					if(sub.equals(subscriber)){
+						key = entry.getKey();
+						return key;
+					}
+				}
+			}
+		}
+		return "all";
 	}
 	
 //	public static void main(String[] args) {
