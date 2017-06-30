@@ -45,7 +45,8 @@ public class Invoker {
 							queueManager.printMap();
 							queueManager.printMapMsg();
 							if(channel.equals("all") && message.equals("getTopics")){
-								sendTopics(host,port);
+//								sendTopics(host,port);
+								broadcastTopics();
 							}
 							else if(message.equals("getSubscribers")){
 								sendSubscribers(host,port,channel);
@@ -88,6 +89,12 @@ public class Invoker {
 	public void broadcast(String channel, byte[] message){
 		for(InetSocketAddress subscriber : queueManager.getSubscribers(channel)){
 			send(message, subscriber);
+		}
+	}
+	
+	public void broadcastTopics(){
+		for(InetSocketAddress subscriber : queueManager.getSubscribers("all")){
+			sendTopics(subscriber.getHostName(), subscriber.getPort());
 		}
 	}
 	
