@@ -250,6 +250,7 @@ public class ChatClient{
 					subscriberPort = portNumber;
 					requestor = new Requestor(portNumber, host, callback);
 					createSubscriber();
+					getSubscribers("all");
 					new Warning("New Subscriber created: "+host+"\\"+String.valueOf(port));
 					dispose();
 				} else {
@@ -411,12 +412,12 @@ public class ChatClient{
 			
 		}
 	}
-
 	
 	private void createTopic(String topic) {
 		//informa a todos que um novo topico foi criado
 //		requestor.publishMessage("Topic "+topicName+" created by "+subscriberName, topicName);
 		topicName = topic;
+//		requestor.publishMessage("getTopics", "all");
 		requestor.publishMessage("Topic "+topicName+" created", topicName);
 		requestor.publishMessage("getTopics", "all");
 		getSubscribers(topicName);
@@ -425,6 +426,7 @@ public class ChatClient{
 	public void createSubscriber() {
 		//increve o cliente em um canal global
 		requestor.publishMessage("getTopics", "all");
+		getSubscribers("all");
 //		if(topicName != null){
 //			requestor.publishMessage(subscriberName+" enter the Topic ", topicName);
 //		}

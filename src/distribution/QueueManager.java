@@ -40,7 +40,7 @@ public class QueueManager {
 		//se o incrito tiver em uma lista, primeiro tira dessa lista e depois coloca no novo canal
 		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
 			//se nao for o cannal em que todos estão
-			if(!entry.getKey().equals("all") && entry.getValue().contains(i))
+			if(entry != null && !entry.getKey().equals("all") && entry.getValue().contains(i))
 			{
 				entry.getValue().remove(i);
 			}

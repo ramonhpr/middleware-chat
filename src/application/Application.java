@@ -184,8 +184,10 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 					String[] topics = string.split(",");
 //					channelVector.clear();
 					for(String topic : topics) {
+						//se for topic novo coloca no vetor
 						if(!channelVector.contains(topic)) {
 							channelVector.add(topic);
+							//se o topic for o mesmo que o user está en~tao guarda o indice para selecionar depois
 							if(topic.equals(chat.getTopicName())){
 								channelIndex = channelVector.indexOf(topic);
 							}
@@ -220,6 +222,7 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 		});
 		new Application();
 		chat.new NewSubscriber();
+//		chat.getSubscribers("all");
 	}
 
 	@Override
@@ -257,6 +260,7 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 			break;
 		case "New Topic":
 			chat.new NewTopic();
+			chatArea.setText("");
 			break;
 		case "Send":
 			chat.send(messageArea.getText());
