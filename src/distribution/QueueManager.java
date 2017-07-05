@@ -21,8 +21,14 @@ public class QueueManager {
 		mapMsg = new HashMap<>();
 	}
 	
-	public void remove(InetSocketAddress iAddress){
-		map.remove(iAddress);
+	public void remove(InetSocketAddress i){
+		for (Entry<String, ArrayList<InetSocketAddress>> entry : map.entrySet()) {
+			//se nao for o cannal em que todos estão
+			if(entry.getValue().contains(i))
+			{
+				map.get(entry.getKey()).remove(i);
+			}
+		}
 	}
 	
 	public void subscribeOnChannel(String channel, String host, int port)

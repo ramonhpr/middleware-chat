@@ -35,30 +35,33 @@ public class ServerRequestHandlerReliable {
 	private Queue<byte[]> queueIN;
 	private Queue<byte[]> queueOUT;
 	
-	private Map<InetSocketAddress, Integer> numErrors;
+//	private Map<InetSocketAddress, Integer> numErrors;
 	
-	private ServerCallback serverCallback;
+	private Callback serverCallback;
 
-	public ServerRequestHandlerReliable(ServerCallback serverCallback) throws IOException {
+	public ServerRequestHandlerReliable(Callback Callback) throws IOException {
 		queueIN = new ArrayDeque<byte[]>();
 		queueOUT = new ArrayDeque<byte[]>();
-		numErrors = new HashMap<InetSocketAddress, Integer>();
+//		numErrors = new HashMap<InetSocketAddress, Integer>();
 		port = 1313;
 		welcomeSocket = new ServerSocket(port);
-		this.serverCallback = serverCallback;
+		this.serverCallback = Callback;
 //			/*FIXME: remove this loop on constructor
 //			 * Make a thread just to accept connection and a array of 
 //			 * socket/thread to handle them */
 		(new Thread(new ThreadProcessServer())).start();
 	}
 	
-	public void pushOut(byte[] msg, String host, int port) {
+	public boolean pushOut(byte[] msg, String host, int port) {
 		// FIXME: Associar IP e Porta na mensagem numa mesma classe	
 		queueOUT.add(msg);
-		send(host, port);
+		if(send(host, port)==false){
+			return false;
+		}
+		return true;
 	}
 
-	private void send(String host, int port) {
+	private boolean send(String host, int port) {
 		byte[] msg = queueOUT.remove();
 		sentMessageSize = msg.length;
 		try {
@@ -75,21 +78,25 @@ public class ServerRequestHandlerReliable {
 			s.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			InetSocketAddress iAddress = new InetSocketAddress(host, port);
-			Integer count = numErrors.get(iAddress);
-			if(count == null){
-				count = new Integer(0);
-			}
+			return false;
+//			InetSocketAddress iAddress = new InetSocketAddress(host, port);
+//			Integer count = numErrors.get(iAddress);
+//			if(count == null){
+//				count = new Integer(0);
+//			}
 			//if time maior q x
-			count++;
-			if(count > 3){
-				// tira do canal
-				serverCallback.onDisconnect(iAddress);
-			} else{
-				//quando user sai a port ainda ta na lista de inscrito, ai da error ConnectException
-				pushOut(msg, host, port);
-			}
+//			count++;
+//			numErrors.put(iAddress, count);
+//			if(count >= 3){
+//				// tira do canal
+//				numErrors.remove(iAddress);
+//				return false;
+//			} else{
+//				//quando user sai a port ainda ta na lista de inscrito, ai da error ConnectException
+//				pushOut(msg, host, port);
+//			}
 		}
+		return true;
 	}
 	
 	public byte[] receive(){

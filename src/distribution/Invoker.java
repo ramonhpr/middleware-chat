@@ -17,16 +17,17 @@ public class Invoker {
 
 	public Invoker() {
 		try {
-			srhr = new ServerRequestHandlerReliable(new ServerCallback() {		
+			srhr = new ServerRequestHandlerReliable(new Callback() {		
 				@Override
 				public void onReceive(String msg) {
 					
 				}
 				
-				@Override
-				public void onDisconnect(InetSocketAddress iAddress) {
-					queueManager.remove(iAddress);
-				}
+//				@Override
+//				public void onDisconnect(InetSocketAddress iAddress) {
+//					queueManager.remove(iAddress);
+//					broadcastSubscribers();
+//				}
 				
 				@Override
 				public void onReceive() {
@@ -83,13 +84,27 @@ public class Invoker {
 //		}
 //	}
 	
-	public void send(byte[] msg, InetSocketAddress destination) {
-		srhr.pushOut(msg, destination.getHostName(), destination.getPort());
+	public boolean send(byte[] msg, InetSocketAddress destination) {
+		if(srhr.pushOut(msg, destination.getHostName(), destination.getPort())==false){
+			return false;
+		}
+		return true;
 	}
 	
 	public void broadcast(String channel, byte[] message){
+		boolean problem = false;
+		InetSocketAddress iAdress = null;
 		for(InetSocketAddress subscriber : queueManager.getSubscribers(channel)){
-			send(message, subscriber);
+			if(send(message, subscriber)==false){
+				problem = true;
+				iAdress = subscriber;
+				break;
+			}
+		}
+		
+		if(problem){
+			queueManager.remove(iAdress);
+			broadcastSubscribers();
 		}
 	}
 	
