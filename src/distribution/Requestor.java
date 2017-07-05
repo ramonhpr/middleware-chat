@@ -8,6 +8,8 @@ package distribution;
 import infrastructure.ClientRequestHandlerReliable;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import utils.Message;
 import utils.MessageBody;
@@ -22,7 +24,7 @@ public class Requestor {
 	private String ip;
 	private Marshaller marshaller;
 	private ClientRequestHandlerReliable crhr;
-	private Callback clientListener;
+//	private Callback clientListener;
 	private Callback applicationListener;
 
 	public Requestor(final int port, String ip, final Callback applicationCallback) {
@@ -30,34 +32,8 @@ public class Requestor {
 		this.ip = ip;
 		marshaller = new Marshaller();
 		applicationListener = applicationCallback;
-		clientListener = new Callback() {
-			
-			@Override
-			public void onReceive() {
-				// TODO Auto-generated method stub
-				byte[] receivedMsg;
-
-				receivedMsg = crhr.receive();
-				if (receivedMsg != null) {
-					try {
-						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-						String msg = rcvdMsg.getBody().getMessage();
-						System.out.println(port+" recebeu msg: "+msg);
-						applicationCallback.onReceive(msg);
-					} catch (ClassNotFoundException | IOException
-							| InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			@Override
-			public void onReceive(String msg) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
-		crhr = new ClientRequestHandlerReliable(ip, port, clientListener);
+		crhr = new ClientRequestHandlerReliable(ip, port);
+		new Timer().schedule(new Receive(), 0, 1000);
 	}
 
 	public void publishMessage(String msg, String channel) {
@@ -70,5 +46,33 @@ public class Requestor {
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	class Receive extends TimerTask {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while(!crhr.isEmpty()){
+				System.out.println("crhr receive não é null!");
+
+				byte[] receivedMsg;
+
+				receivedMsg = crhr.receive();
+				if (receivedMsg != null) {
+					try {
+						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+						String msg = rcvdMsg.getBody().getMessage();
+						System.out.println(port+" recebeu msg: "+msg);
+						applicationListener.onReceive(msg);
+					} catch (ClassNotFoundException | IOException
+							| InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			System.out.println("crhr receive é null!");
+		}
+		
 	}
 }

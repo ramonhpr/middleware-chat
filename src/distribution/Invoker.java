@@ -2,6 +2,8 @@ package distribution;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import utils.Cryptographer;
 import utils.Message;
@@ -31,44 +33,62 @@ public class Invoker {
 				@Override
 				public void onReceive() {
 					// TODO Auto-generated method stub
-					byte[] receivedMsg = srhr.receive();
-					if (receivedMsg != null) {
-						try {
-							byte[] cpyrcvMsg = (byte[]) receivedMsg.clone();
-							Message rcvdMsg = marshaller.unmarshall(receivedMsg);
-							String host = rcvdMsg.getHeader().getIp();
-							int port = rcvdMsg.getHeader().getPort();
-							String channel = rcvdMsg.getHeader().getChannel();
-							String message = rcvdMsg.getBody().getMessage();
-							queueManager.subscribeOnChannel(channel, host, port);
-							queueManager.publishOnChannel(rcvdMsg);
-							queueManager.printMap();
-//							queueManager.printMapMsg();
-							if(channel.equals("all") && message.equals("getTopics")){
-//								sendTopics(host,port);
-								broadcastTopics();
-							}
-							else if(message.equals("getSubscribers")){
-//								sendSubscribers(host,port,channel);
-								broadcastSubscribers();
-							}
-							else {
-								broadcast(channel, cpyrcvMsg);
-							}
-						} catch (ClassNotFoundException | IOException
-								| InterruptedException e) {
-							e.printStackTrace();
-							System.out.println("nao retornou a msg");
-						}
-					}
 				}
 			});
 			marshaller = new Marshaller();
 			queueManager = new QueueManager();
+			new Timer().schedule(new Receive(), 0, 1000);
 //			new Thread(new ReceiveMsgListener()).start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	class Receive extends TimerTask{
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while(!srhr.isEmpty()){
+
+				System.out.println("srhr receive não é null!");
+
+				byte[] receivedMsg = srhr.receive();
+				if (receivedMsg != null) {
+					try {
+						byte[] cpyrcvMsg = (byte[]) receivedMsg.clone();
+						Message rcvdMsg = marshaller.unmarshall(receivedMsg);
+						String host = rcvdMsg.getHeader().getIp();
+						int port = rcvdMsg.getHeader().getPort();
+						String channel = rcvdMsg.getHeader().getChannel();
+						String message = rcvdMsg.getBody().getMessage();
+						queueManager.subscribeOnChannel(channel, host, port);
+						queueManager.publishOnChannel(rcvdMsg);
+						queueManager.printMap();
+	//					queueManager.printMapMsg();
+						if(channel.equals("all") && message.equals("getTopics")){
+	//						sendTopics(host,port);
+							broadcastTopics();
+						}
+						else if(message.equals("getSubscribers")){
+	//						sendSubscribers(host,port,channel);
+							broadcastSubscribers();
+						}
+						else {
+							broadcast(channel, cpyrcvMsg);
+						}
+					} catch (ClassNotFoundException | IOException
+							| InterruptedException e) {
+						e.printStackTrace();
+						System.out.println("nao retornou a msg");
+					}
+
+					System.out.println("msg processada");
+				}
+			}
+			System.out.println("srhr receive é null!");
+		}
+		
 	}
 
 //	public void sendMessage(String ip, int port, String msg, String channel) {

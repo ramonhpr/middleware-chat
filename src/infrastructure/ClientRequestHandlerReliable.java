@@ -34,16 +34,16 @@ public class ClientRequestHandlerReliable {
     
     private Queue<byte[]> queueIN;
     private Queue<byte[]> queueOUT;
-    private Callback callback;
+//    private Callback callback;
 
-	public ClientRequestHandlerReliable(String host, int port, Callback callback) {
+	public ClientRequestHandlerReliable(String host, int port) {
         this.host = host;
         this.port = port;
         this.serverHost = "localhost";
         this.serverPort = 1313;
         this.queueIN = new ArrayDeque<byte[]>();
         this.queueOUT = new ArrayDeque<byte[]>();
-        this.callback = callback;
+//        this.callback = callback;
         
         try {
 			welcomeSocket = new ServerSocket(port);
@@ -79,6 +79,10 @@ public class ClientRequestHandlerReliable {
 	public byte[] receive(){
 		return queueIN.poll();
 	}
+	
+	public boolean isEmpty(){
+		return queueIN.isEmpty();
+	}
     
     class ThreadReceive implements Runnable {
         public void run() {
@@ -92,7 +96,7 @@ public class ClientRequestHandlerReliable {
 		        	message = new byte[size];
                 	inFromServer.read(message, 0, size);
                 	queueIN.add(message);
-                	callback.onReceive();
+//                	callback.onReceive();
 //                	System.out.println("client recebeu msg");
 //                	Marshaller m = new Marshaller();
 //                	Message msg = m.unmarshall(message);

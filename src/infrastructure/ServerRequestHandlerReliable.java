@@ -95,6 +95,10 @@ public class ServerRequestHandlerReliable {
 	public byte[] receive(){
 		return queueIN.poll();
 	}
+	
+	public boolean isEmpty(){
+		return queueIN.isEmpty();
+	}
 
 	class ThreadProcessServer implements Runnable {
 		public void run() {
@@ -114,7 +118,7 @@ public class ServerRequestHandlerReliable {
 //						System.out.println("queueIn is empty:" + queueIN.isEmpty());
 						inFromClient.close();
 //						System.out.println("size of queueIn is: "+queueIN.size());
-						serverCallback.onReceive();
+//						serverCallback.onReceive();
 	//				}
 					connectionSocket.close();
 				} catch (IOException e1) {
