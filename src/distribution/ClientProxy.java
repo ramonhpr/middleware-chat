@@ -1,6 +1,8 @@
 package distribution;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 public class ClientProxy implements Serializable{
@@ -10,17 +12,21 @@ public class ClientProxy implements Serializable{
 	protected String host;
 	protected int port;
 	protected int objectId;
+	private Requestor requestor;
 	
-	public ClientProxy() {
+	public ClientProxy(Callback callback) {
+		port = getNewPort();
 		
+		try {
+			host = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
+		requestor = new Requestor(port, host, callback);
 	}
-	
-//	public ClientProxy(final int p) throws UnknownHostExecption {
-//		
-//	}
-	
-	
-	public int getNewPort(){
+		
+	private int getNewPort(){
 		Random random = new Random();
 		port = BASE_PORT + random.nextInt(MAX_PORT - BASE_PORT);
 		validatePort();
@@ -29,6 +35,10 @@ public class ClientProxy implements Serializable{
 	
 	private void validatePort(){
 		
+	}
+	
+	public void publish(String message, String channel){
+		requestor.publishMessage(message, channel);
 	}
 	
 	public String getHost() {

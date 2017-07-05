@@ -23,13 +23,12 @@ public class Requestor {
 	private Marshaller marshaller;
 	private ClientRequestHandlerReliable crhr;
 	private Callback clientListener;
-	private Callback applicationListener;
+	
 
 	public Requestor(final int port, String ip, final Callback applicationCallback) {
 		this.port = port;
 		this.ip = ip;
 		marshaller = new Marshaller();
-		applicationListener = applicationCallback;
 		clientListener = new Callback() {
 			
 			@Override
@@ -57,7 +56,7 @@ public class Requestor {
 				
 			}
 		};
-		crhr = new ClientRequestHandlerReliable(ip, port, clientListener);
+		crhr = new ClientRequestHandlerReliable(port, clientListener);
 	}
 
 	public void publishMessage(String msg, String channel) {

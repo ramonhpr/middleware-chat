@@ -14,17 +14,14 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 import distribution.Callback;
-import distribution.Marshaller;
-import utils.Cryptographer;
-import utils.Message;
 
 /**
  *
  * @author risa
  */
 public class ClientRequestHandlerReliable {
-    private String host, serverHost;
-    private int port, serverPort;
+    private String serverHost;
+    private int serverPort;
     
     private Socket clientSocket = null;
     private Socket serverSocket = null;
@@ -36,9 +33,7 @@ public class ClientRequestHandlerReliable {
     private Queue<byte[]> queueOUT;
     private Callback callback;
 
-	public ClientRequestHandlerReliable(String host, int port, Callback callback) {
-        this.host = host;
-        this.port = port;
+	public ClientRequestHandlerReliable(int port, Callback callback) {
         this.serverHost = "localhost";
         this.serverPort = 1313;
         this.queueIN = new ArrayDeque<byte[]>();

@@ -1,14 +1,11 @@
 package distribution;
 
+import infrastructure.ServerRequestHandlerReliable;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import utils.Cryptographer;
 import utils.Message;
-import utils.MessageBody;
-import utils.MessageHeader;
-import infrastructure.ServerCallback;
-import infrastructure.ServerRequestHandlerReliable;
 
 public class Invoker {
 	private Marshaller marshaller;
@@ -31,7 +28,6 @@ public class Invoker {
 				
 				@Override
 				public void onReceive() {
-					// TODO Auto-generated method stub
 					byte[] receivedMsg = srhr.receive();
 					if (receivedMsg != null) {
 						try {
@@ -124,7 +120,6 @@ public class Invoker {
 		try {
 			send(marshaller.marshall(new Message(queueManager.getTopicsString())),new InetSocketAddress(host,port));
 		} catch (IOException | InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -133,7 +128,6 @@ public class Invoker {
 		try {
 			send(marshaller.marshall(new Message(queueManager.getSubscribersString(channel))),new InetSocketAddress(host,port));
 		} catch (IOException | InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

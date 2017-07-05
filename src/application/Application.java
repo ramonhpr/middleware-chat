@@ -2,19 +2,14 @@ package application;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -23,8 +18,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import distribution.Callback;
-import distribution.Invoker;
-import utils.Message;
 
 public class Application extends JFrame implements MouseListener, FocusListener{
 	/**
@@ -216,9 +209,7 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 			}
 
 			@Override
-			public void onReceive() {
-				// TODO Auto-generated method stub
-				
+			public void onReceive() {				
 			}
 		});
 		new Application();
@@ -228,7 +219,6 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getSource().getClass().getSimpleName().equals("JButton")){
 			JButton button = (JButton) e.getSource();
 			switch (button.getText()) {
@@ -258,35 +248,25 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void focusGained(FocusEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 }
