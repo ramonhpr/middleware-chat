@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
 
+import utils.Callback;
+
 public class ClientProxy implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private static final int BASE_PORT = 1023;

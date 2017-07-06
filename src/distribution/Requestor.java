@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import utils.Callback;
 import utils.Message;
 import utils.MessageBody;
 import utils.MessageHeader;
@@ -53,6 +54,7 @@ public class Requestor {
 						applicationCallback.onReceive(msg);
 						
 						//recebeu msg
+						System.out.println("port:"+rcvdMsg.getHeader().getPort());
 						received = rcvdMsg.getHeader().getPort() == port || rcvdMsg.getHeader().getPort() == 0 ;
 //						last = true;
 					} catch (ClassNotFoundException | IOException

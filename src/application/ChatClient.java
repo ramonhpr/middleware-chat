@@ -19,8 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import distribution.Callback;
 import distribution.ClientProxy;
+import utils.Callback;
 
 /**
  *
@@ -351,7 +351,7 @@ public class ChatClient{
 //		requestor.publishMessage("getTopics", "all");
 		proxy.publish("Topic "+topic+" created", topic);
 		proxy.publish("getTopics", "all");
-		getSubscribers(topic);
+//		getSubscribers(topic);
 	}
 	
 	public void createSubscriber() {

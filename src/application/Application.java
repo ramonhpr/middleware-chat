@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import distribution.Callback;
+import utils.Callback;
 
 public class Application extends JFrame implements MouseListener, FocusListener{
 	/**

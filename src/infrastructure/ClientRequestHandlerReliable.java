@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import distribution.Callback;
+import utils.Callback;
 
 /**
  *
