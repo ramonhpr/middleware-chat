@@ -351,7 +351,7 @@ public class ChatClient{
 //		requestor.publishMessage("getTopics", "all");
 		proxy.publish("Topic "+topic+" created", topic);
 		proxy.publish("getTopics", "all");
-//		getSubscribers(topic);
+		getSubscribers(topic);
 	}
 	
 	public void createSubscriber() {
