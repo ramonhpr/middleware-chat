@@ -377,7 +377,7 @@ public class ChatClient{
 	
 	public void send(String msg) {
 //		msg = subscriberName+": "+msg;
-		msg = subscriberHost+"/"+subscriberPort+": "+msg;
+		//msg = subscriberHost+"/"+subscriberPort+": "+msg;
 		proxy.publish(msg, topicName);
 	}
 	

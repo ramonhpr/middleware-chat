@@ -2,6 +2,7 @@ package distribution;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
 
@@ -13,12 +14,19 @@ public class ClientProxy implements Serializable{
 	protected int port;
 	protected int objectId;
 	private Requestor requestor;
+	private String name;
 	
 	public ClientProxy(Callback callback) {
 		port = getNewPort();
-		
+		this.name = String.valueOf(port);
 		try {
 			host = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		try {
+			InetSocketAddress address = new InetSocketAddress(InetAddress.getLocalHost(), port);
+			NamingServer.setName(name, address);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -37,8 +45,12 @@ public class ClientProxy implements Serializable{
 		
 	}
 	
+	public void registry(String name){
+		
+	}
+	
 	public void publish(String message, String channel){
-		requestor.publishMessage(message, channel);
+		requestor.publishMessage(name + ": "+message, channel);
 	}
 	
 	public String getHost() {

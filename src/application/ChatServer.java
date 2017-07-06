@@ -1,14 +1,18 @@
 package application;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 import distribution.Invoker;
+import distribution.NamingServer;
 
 public class ChatServer {
-	private static Invoker invoker;
 	
 	public static void main(String[] args) throws IOException, Throwable {
 		System.out.println("ChatServer inicializado");
-		invoker = new Invoker();
+		new Invoker();
+		InetSocketAddress address = new InetSocketAddress(InetAddress.getLocalHost(), Invoker.SERVER_PORT);
+		NamingServer.registerServer(address);
 	}
 }

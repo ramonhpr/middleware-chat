@@ -8,19 +8,23 @@ package infrastructure;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 import distribution.Callback;
+import distribution.NamingServer;
 
 /**
  *
  * @author risa
  */
 public class ClientRequestHandlerReliable {
-    private String serverHost;
+    
+	
+	private String serverHost;
     private int serverPort;
     
     private Socket clientSocket = null;
@@ -32,14 +36,19 @@ public class ClientRequestHandlerReliable {
     private Queue<byte[]> queueIN;
     private Queue<byte[]> queueOUT;
     private Callback callback;
-
+    
+    
+    
+    
+    
 	public ClientRequestHandlerReliable(int port, Callback callback) {
-        this.serverHost = "localhost";
-        this.serverPort = 1313;
+		InetSocketAddress serverAddress = NamingServer.getServerAddress();
+        this.serverHost = serverAddress.getHostName();
+        this.serverPort = serverAddress.getPort();
         this.queueIN = new ArrayDeque<byte[]>();
         this.queueOUT = new ArrayDeque<byte[]>();
         this.callback = callback;
-        
+       
         try {
 			welcomeSocket = new ServerSocket(port);
 			(new Thread(new ThreadReceive())).start();
@@ -57,6 +66,7 @@ public class ClientRequestHandlerReliable {
 		while (!queueOUT.isEmpty()) {
 			byte[] message = queueOUT.remove();
 	        try {
+	        	
 				clientSocket = new Socket(serverHost, serverPort);
 		        outToServer = new DataOutputStream(clientSocket.getOutputStream());
 //		        System.out.println("size of message: " + message.length);
@@ -65,6 +75,7 @@ public class ClientRequestHandlerReliable {
     	        outToServer.flush();
     	        outToServer.close();
     	        clientSocket.close();
+    	       
 			} catch (IOException e1) {
 				pushOut(message);
 			}  	

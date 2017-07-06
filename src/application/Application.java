@@ -156,7 +156,6 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 			
 			@Override
 			public void onReceive(String msg) {
-				// TODO Auto-generated method stub
 //				byte[] receivedMsg;
 
 //				receivedMsg = crhr.receive();
@@ -210,6 +209,11 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 
 			@Override
 			public void onReceive() {				
+			}
+			
+			@Override
+			public void onTimeOut() {
+				messageArea.setText(messageArea.getText() + "Mensagem não enviada. Servidor indisponível.\n");
 			}
 		});
 		new Application();
