@@ -11,5 +11,6 @@ package distribution;
 public interface Callback {
 	void onReceive();
 	void onReceive(String msg); 
+	void onTimeOut();
 }
 

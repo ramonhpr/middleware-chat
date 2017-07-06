@@ -211,6 +211,11 @@ public class Application extends JFrame implements MouseListener, FocusListener{
 			@Override
 			public void onReceive() {				
 			}
+
+			@Override
+			public void onTimeOut() {
+				chatArea.setText(chatArea.getText() + "Servidor indisponível.\n");
+			}
 		});
 		new Application();
 		chat.new NewSubscriber();

@@ -59,6 +59,12 @@ public class Invoker {
 						}
 					}
 				}
+
+				@Override
+				public void onTimeOut() {
+					// TODO Auto-generated method stub
+					
+				}
 			});
 			marshaller = new Marshaller();
 			queueManager = new QueueManager();

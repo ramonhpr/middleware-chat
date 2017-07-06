@@ -8,6 +8,8 @@ package distribution;
 import infrastructure.ClientRequestHandlerReliable;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import utils.Message;
 import utils.MessageBody;
@@ -24,11 +26,17 @@ public class Requestor {
 	private ClientRequestHandlerReliable crhr;
 	private Callback clientListener;
 	
+	//timeout
+	private boolean received;
+	private Timer timer;
+	private boolean last = true;	
+	private static int TIMEOUT = 3000;
 
 	public Requestor(final int port, String ip, final Callback applicationCallback) {
 		this.port = port;
 		this.ip = ip;
 		marshaller = new Marshaller();
+		timer = new Timer();
 		clientListener = new Callback() {
 			
 			@Override
@@ -43,6 +51,10 @@ public class Requestor {
 						String msg = rcvdMsg.getBody().getMessage();
 						System.out.println(port+" recebeu msg: "+msg);
 						applicationCallback.onReceive(msg);
+						
+						//recebeu msg
+						received = rcvdMsg.getHeader().getPort() == port || rcvdMsg.getHeader().getPort() == 0 ;
+//						last = true;
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
 						e.printStackTrace();
@@ -55,6 +67,11 @@ public class Requestor {
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void onTimeOut() {
+				applicationCallback.onTimeOut();
+			}
 		};
 		crhr = new ClientRequestHandlerReliable(port, clientListener);
 	}
@@ -66,6 +83,20 @@ public class Requestor {
 
 		try {
 			crhr.pushOut(marshaller.marshall(message));
+			if(last){
+				last = false;
+				timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						if(!received){
+							clientListener.onTimeOut();
+							System.out.println("timeout");
+						}
+						received = false;
+						last = true;
+					}
+				}, TIMEOUT);
+			}
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}

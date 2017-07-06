@@ -55,7 +55,7 @@ public class ClientRequestHandlerReliable {
     
 	private void send() {
 		while (!queueOUT.isEmpty()) {
-			byte[] message = queueOUT.remove();
+			byte[] message = queueOUT.peek();
 	        try {
 				clientSocket = new Socket(serverHost, serverPort);
 		        outToServer = new DataOutputStream(clientSocket.getOutputStream());
@@ -65,8 +65,10 @@ public class ClientRequestHandlerReliable {
     	        outToServer.flush();
     	        outToServer.close();
     	        clientSocket.close();
+    	        queueOUT.remove();
 			} catch (IOException e1) {
-				pushOut(message);
+//				pushOut(message);
+				break;
 			}  	
 		}
 	}
