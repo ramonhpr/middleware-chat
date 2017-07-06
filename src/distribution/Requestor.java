@@ -55,7 +55,7 @@ public class Requestor {
 						
 						//recebeu msg
 						System.out.println("port:"+rcvdMsg.getHeader().getPort());
-						received = rcvdMsg.getHeader().getPort() == port || rcvdMsg.getHeader().getPort() == 0 ;
+						received = received || rcvdMsg.getHeader().getPort() == port || rcvdMsg.getHeader().getPort() == 0;
 //						last = true;
 					} catch (ClassNotFoundException | IOException
 							| InterruptedException e) {
